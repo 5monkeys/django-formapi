@@ -76,7 +76,7 @@ setup(
     name="django-formapi",
     version=version,
 
-    description="Django API with signed requests utilizing forms for validation.",
+    description="Django API creation with signed requests utilizing forms for validation.",
     long_description=codecs.open(
         os.path.join(
             os.path.dirname(__file__),

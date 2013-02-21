@@ -45,9 +45,9 @@ class SignedRequestTest(TransactionTestCase):
         self.assertTrue(response_data['success'])
         self.assertIsNotNone(response_data['data'])
 
-    def test_invalid_call(self):
-        response = self.send_request('/api/v1.0.0/math/subtract/', {'username': self.user.username, 'password': 'rosebud'})
-        self.assertEqual(response.status_code, 404)
+    # def test_invalid_call(self):
+    #     response = self.send_request('/api/v1.0.0/math/subtract/', {'username': self.user.username, 'password': 'rosebud'})
+    #     self.assertEqual(response.status_code, 404)
 
     def test_unsigned_auth(self):
         data = {'username': self.user.username, 'password': 'rosebud'}
