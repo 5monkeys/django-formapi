@@ -106,6 +106,6 @@ setup(
     data_files=data_files,
     packages=packages,
     install_requires=['django-uuidfield'],
-    tests_require=['Django', 'django-uuidfield'],
+    tests_require=['Django', 'django-uuidfield', 'pytz'],
     test_suite='run_tests.main',
 )
