@@ -1,0 +1,31 @@
+{% extends 'formapi/base.html' %}
+{% load url from future %}
+{% load markup %}
+{% block content %}
+    <div class="span8">
+        <div class="hero-unit">
+            <h3>Call</h3>
+            <p><strong>API version:</strong> {{ version }}</p>
+            <p><strong>Namespace:</strong> {{ namespace }}</p>
+            <p><strong>Name:</strong> {{ call }}</p>
+            <p><strong>Url:</strong> {% url "api_view" version namespace call %}</p>
+            <h4>Parameters</h4>
+            <ul>
+                {% for field in form_class %}
+                    <li>{{ field.name }}
+                        <ul>
+                            <li>Required:{{ field.field.required }}</li>
+                            {% if field.field.help_text %}
+                                <li>{{ field.help_text }}</li>
+                            {% endif %}
+                        </ul>
+                {% empty %}
+                    <li>No parameters</li>
+                {% endfor %}
+            </ul>
+            <h4>Description</h4>
+            <p>{{ docstring|restructuredtext }}</p>
+
+        </div>
+    </div>
+{% endblock %}

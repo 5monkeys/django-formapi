@@ -1,0 +1,45 @@
+{% load url from future %}
+{% load formapi_utils %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <link href="{{ STATIC_URL }}bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="{% url "api_discover" %}">API</a>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        {% block nav %}
+            <div class="span3">
+                <div class="well sidebar-nav">
+                    <ul class="nav nav-list">
+                        {% for version, namespaces in mapping.iteritems %}
+                            <li class="nav-header">{{ version }}</li>
+                            <li class="divider"></li>
+                            {% with namespaces|as_dict as namespace_dict %}
+                                {% for namespace, calls in namespace_dict.iteritems %}
+                                    <li class="nav-header">{{ namespace }}</li>
+                                    {% for name, class in calls.iteritems %}
+                                        <li><a href="{% url "api_call" version namespace name %}">{{ name }}</a></li>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endwith %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endblock %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
