@@ -97,22 +97,18 @@ class API(FormView):
             raise Http404
 
     def get_access_params(self):
-        key = self.request.POST.get('key') \
-            if 'key' in self.request.POST else self.request.GET.get('key')
-        sign = self.request.POST.get('sign') \
-            if 'sign' in self.request.POST else self.request.GET.get('sign')
+        key = self.request.REQUEST.get('key')
+        sign = self.request.REQUEST.get('sign')
         return key, sign
 
     def sign_ok(self, sign):
         validation_string = ''
-        if getattr(self.get_form_class(), 'signed_requests', API.signed_requests):
-            for field_name in sorted(self.get_form_class()().fields.keys()):
-                param = self.request.POST.get(field_name)
-                if param is not None:
-                    validation_string += ''.join(('&', field_name, '=', param))
-            validation_string = validation_string.lstrip('&')
-            return sign == hmac.new(str(self.api_key.secret), urllib2.quote(validation_string.encode('utf8')), sha1).hexdigest()
-        return True
+        for field_name in sorted(self.get_form_class()().fields.keys()):
+            param = self.request.REQUEST.get(field_name)
+            if param is not None:
+                validation_string += ''.join(('&', field_name, '=', param))
+        validation_string = validation_string.lstrip('&')
+        return sign == hmac.new(str(self.api_key.secret), urllib2.quote(validation_string.encode('utf-8')), sha1).hexdigest()
 
     def render_to_json_response(self, context, **response_kwargs):
         data = dumps(context)
@@ -121,8 +117,10 @@ class API(FormView):
 
     def form_valid(self, form):
         self.log.info('Valid form received')
-
-        data = form.action(self.api_key.test)
+        test_call = False
+        if self.api_key:
+            test_call = self.api_key.test
+        data = form.action(test_call)
         response_data = {
             'success': not bool(len(form.errors)),
             'errors': form.errors,
@@ -152,47 +150,40 @@ class API(FormView):
         self.log = AddHeaderAdapter(log, {'header': self.get_log_header()})
 
     def authorize(self):
-        key, sign = self.get_access_params()
-        ### Check for not revoked api key
-        try:
-            self.api_key = APIKey.objects.get(key=key, revoked=False)
-        except APIKey.DoesNotExist:
-            return False
+        if getattr(self.get_form_class(), 'signed_requests', API.signed_requests):
+            key, sign = self.get_access_params()
+            ### Check for not revoked api key
+            try:
+                self.api_key = APIKey.objects.get(key=key, revoked=False)
+            except APIKey.DoesNotExist:
+                return False
+            ### Check request signature
+            return self.sign_ok(sign)
 
-        ### Check request signature
-        if self.sign_ok(sign):
-            return True
-
-        return False
+        return True
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
-        # set up request
+        # Set up request
         self.request = request
 
-        # set up form class
+        # Set up form class
         self.version = kwargs['version']
         self.namespace = kwargs['namespace']
         self.call = kwargs['call']
 
         # Check access params
+        self.api_key = None
         access_granted = self.authorize()
-
         # Setup logging to add header
         self.setup_log(LOG)
 
         # Authorize request
         if access_granted:
-            self.log.info(
-                'Access Granted %s, %s',
-                self.request.GET,
-                self.request.POST)
+            self.log.info('Access Granted %s', self.request.REQUEST)
             return super(API, self).dispatch(request, *args, **kwargs)
 
         # Access denied
-        self.log.info(
-            'Access Denied %s, %s',
-            self.request.GET,
-            self.request.POST)
+        self.log.info('Access Denied %s', self.request.REQUEST)
 
         return HttpResponse(status=401)
