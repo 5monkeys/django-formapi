@@ -1,14 +1,13 @@
 {% extends 'formapi/base.html' %}
-{% load markup %}
 {% block content %}
     <div class="span8">
         <div class="hero-unit">
             <h3>Call</h3>
             <p><strong>API version:</strong> {{ version }}</p>
             <p><strong>Name:</strong> {{ call }}</p>
-            <p><strong>Url:</strong> {% url "api_view" version call %}</p>
+            {%comment %}<p><strong>Url:</strong> {% url "api_view" version call %}</p>{% endcomment %}
             <h4>Description</h4>
-            <p>{{ docstring|restructuredtext }}</p>
+            <p>{{ docstring }}</p>
             <h3>Test Form</h3>
             <form action="#" method="post">
                 <p><label for="id_key">key:</label> <input type="text" name="key" id="id_key"/></p>
