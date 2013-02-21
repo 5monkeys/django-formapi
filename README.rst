@@ -55,9 +55,9 @@ Go ahead and create a ``calls.py``.
 
 Just create a class like your regular Django Forms but inheriting from ``APICall``. Define the fields that your API-call
 should receive. The ``action`` method is called when your fields have been validated and what is returned will be JSON-encoded
-as a response to the API-caller. The ``API.register`` call takes your APICall-class as first argument, the second argument is 
-the namespace the API-call should reside in, the third argument is the name of your call and the fourth the version of this
-APICall. This will result in an url in the form of ``api/[version]/[namespace]/[call_name]/`` so we would get ``/api/v1.0.0/math/divide/``.
+as a response to the API-caller. The ``API.register`` call takes your ``APICall``-class as first argument, the second argument is 
+the ``namespace`` the API-call should reside in, the third argument is the ``name`` of your call and the fourth the ``version``. 
+This will result in an url in the form of ``api/[version]/[namespace]/[call_name]/`` so we would get ``/api/v1.0.0/math/divide/``.
 
 A valid call with the parameters ``{'dividend': 5, 'divisor': 2}`` would result in this response:
 
