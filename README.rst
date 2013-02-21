@@ -3,6 +3,9 @@ django-formapi
 
 Create JSON API:s with HMAC authentication and Django form-validation.
 
+.. image:: https://travis-ci.org/5monkeys/django-formapi.png?branch=master
+    :target: http://travis-ci.org/5monkeys/django-formapi
+
 
 Installation
 ------------
