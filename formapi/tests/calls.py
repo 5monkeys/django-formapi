@@ -6,7 +6,7 @@ from formapi import calls
 from formapi.api import API
 
 
-class AuthenticateUser(calls.APICall):
+class AuthenticateUserCall(calls.APICall):
     """
     Authenticate a user
     """
@@ -21,7 +21,7 @@ class AuthenticateUser(calls.APICall):
 
     def __init__(self, *args, **kwargs):
         self.user_cache = None
-        super(AuthenticateUser, self).__init__(*args, **kwargs)
+        super(AuthenticateUserCall, self).__init__(*args, **kwargs)
 
         # Set the label for the "username" field.
         self.username_field = User._meta.get_field('username')
@@ -30,7 +30,7 @@ class AuthenticateUser(calls.APICall):
         return self.get_user_id()
 
     def clean(self):
-        super(AuthenticateUser, self).clean()
+        super(AuthenticateUserCall, self).clean()
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
         if username and password:
@@ -53,7 +53,26 @@ class AuthenticateUser(calls.APICall):
         return self.user_cache
 
 
-API.register(AuthenticateUser, 'user', 'authenticate', version='v1.0.0')
+class DivisionCall(calls.APICall):
+    """
+    Returns the quotient of two integers
+    """
+    dividend = forms.IntegerField()
+    divisor = forms.IntegerField()
+
+    signed_requests = False
+
+    def action(self, test):
+        dividend = self.cleaned_data.get('dividend')
+        divisor = self.cleaned_data.get('divisor')
+        try:
+            return float(dividend) / float(divisor)
+        except ZeroDivisionError:
+            self.add_error("DIVISION BY ZERO, OH SHIIIIII")
+
+
+API.register(AuthenticateUserCall, 'user', 'authenticate', version='v1.0.0')
+API.register(DivisionCall, 'math', 'divide', version='v1.0.0')
 
 
 
