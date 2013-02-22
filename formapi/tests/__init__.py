@@ -24,7 +24,7 @@ class SignedRequestTest(TransactionTestCase):
         self.user.save()
         self.authenticate_url = '/api/v1.0.0/user/authenticate/'
 
-    def send_request(self, url, data, key=None, secret=None):
+    def send_request(self, url, data, key=None, secret=None, req_method="POST"):
         if not key:
             key = self.api_key.key
         if not secret:
@@ -32,7 +32,10 @@ class SignedRequestTest(TransactionTestCase):
         sign = get_sign(secret, **data)
         data['key'] = key
         data['sign'] = sign
-        return self.client.post(url, data)
+        if req_method == 'POST':
+            return self.client.post(url, data)
+        elif req_method == 'GET':
+            return self.client.get(url, data)
 
     def test_api_key(self):
         unicode(self.api_key)
@@ -81,6 +84,10 @@ class SignedRequestTest(TransactionTestCase):
         response = self.send_request(self.authenticate_url, data, self.api_key_revoked.key, self.api_key_revoked.secret)
         self.assertEqual(response.status_code, 401)
 
+    def test_get_call(self):
+        data = {'username': self.user.username, 'password': '1337haxx'}
+        response = self.send_request(self.authenticate_url, data, req_method='GET')
+        self.assertEqual(response.status_code, 200)
 
 class HMACTest(TransactionTestCase):
 
