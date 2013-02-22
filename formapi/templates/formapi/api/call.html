@@ -1,6 +1,5 @@
 {% extends 'formapi/base.html' %}
 {% load url from future %}
-{% load markup %}
 {% block content %}
     <div class="span8">
         <div class="hero-unit">
@@ -24,7 +23,7 @@
                 {% endfor %}
             </ul>
             <h4>Description</h4>
-            <p>{{ docstring|restructuredtext }}</p>
+            <p>{{ docstring }}</p>
 
         </div>
     </div>
