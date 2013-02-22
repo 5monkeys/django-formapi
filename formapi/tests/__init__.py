@@ -89,6 +89,7 @@ class SignedRequestTest(TransactionTestCase):
         response = self.send_request(self.authenticate_url, data, req_method='GET')
         self.assertEqual(response.status_code, 200)
 
+
 class HMACTest(TransactionTestCase):
 
     def setUp(self):
