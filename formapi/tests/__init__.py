@@ -166,6 +166,14 @@ class JSONEncoderTest(TransactionTestCase):
         User.objects.create(username="test", email="test@example.com")
         queryset = {'queryset': User.objects.all()}
         self.dumps(queryset)
+        self.dumps(User.objects.all())
+
+    def test_values_list(self):
+        User.objects.create(username="test", email="test@example.com")
+        values = User.objects.values('id', 'email')
+        self.dumps(values)
+        values_list = User.objects.values_list('id', flat=True)
+        self.dumps(values_list)
 
     def test_gettext(self):
         gettext_data = {'gettext': ugettext_lazy(u'tränslate me please')}

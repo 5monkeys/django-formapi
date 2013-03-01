@@ -15,7 +15,7 @@ from django.utils.encoding import force_unicode
 from django.utils.importlib import import_module
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
-from django.db.models.query import QuerySet
+from django.db.models.query import QuerySet, ValuesQuerySet
 from django.utils.functional import curry, Promise
 from .models import APIKey
 
@@ -47,6 +47,8 @@ class DjangoJSONEncoder(JSONEncoder):
             return str(obj)
         elif isinstance(obj, Decimal):
             return "%.2f" % obj
+        if isinstance(obj, ValuesQuerySet):
+            return list(obj)
         elif isinstance(obj, QuerySet):
             return loads(serializers.serialize('json', obj))
         elif isinstance(obj, Promise):
