@@ -3,6 +3,7 @@ import urllib2
 from hashlib import sha1
 from django.utils.encoding import force_unicode
 
+
 def get_sign(secret, querystring=None, **params):
     """
     Return sign for querystring.
