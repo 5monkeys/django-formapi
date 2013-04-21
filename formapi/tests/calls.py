@@ -70,7 +70,6 @@ class DivisionCall(calls.APICall):
         except ZeroDivisionError:
             self.add_error("DIVISION BY ZERO, OH SHIIIIII")
 
-
 API.register(AuthenticateUserCall, 'user', 'authenticate', version='v1.0.0')
 API.register(DivisionCall, 'math', 'divide', version='v1.0.0')
 
