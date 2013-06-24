@@ -10,6 +10,7 @@ import datetime
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse, Http404
+from django.utils.crypto import constant_time_compare
 from django.utils.decorators import method_decorator, classonlymethod
 from django.utils.encoding import force_unicode
 from django.utils.importlib import import_module
@@ -17,6 +18,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 from django.db.models.query import QuerySet, ValuesQuerySet
 from django.utils.functional import curry, Promise
+import itertools
 from .models import APIKey
 
 LOG = logging.getLogger('formapi')
@@ -104,13 +106,16 @@ class API(FormView):
         return key, sign
 
     def sign_ok(self, sign):
-        validation_string = ''
-        for field_name in sorted(self.get_form_class()().fields.keys()):
-            param = self.request.REQUEST.get(field_name)
-            if param is not None:
-                validation_string += ''.join(('&', field_name, '=', param))
-        validation_string = validation_string.lstrip('&')
-        return sign == hmac.new(str(self.api_key.secret), urllib2.quote(validation_string.encode('utf-8')), sha1).hexdigest()
+        pairs = ((field, self.request.REQUEST.get(field))
+                 for field in sorted(self.get_form_class()().fields.keys()))
+        filtered_pairs = itertools.ifilter(lambda x: x[1] is not None, pairs)
+        query_string = '&'.join(('='.join(pair) for pair in filtered_pairs))
+        query_string = urllib2.quote(query_string.encode('utf-8'))
+        digest = hmac.new(
+            str(self.api_key.secret),
+            query_string,
+            sha1).hexdigest()
+        return constant_time_compare(sign, digest)
 
     def render_to_json_response(self, context, **response_kwargs):
         data = dumps(context)
