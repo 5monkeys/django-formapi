@@ -76,7 +76,7 @@ An invalid call with the parameters ``{'dividend': "five", 'divisor': 2}`` would
 
 
 Authentication
------
+--------------
 By default ``APICalls`` have HMAC-authentication turned on. Disable it by setting ``signed_requests = False`` on your ``APICall``.
 
 If not disabled users of the API will have to sign their calls. To do this they need a ``secret`` generate, create a ``APIKey`` through the django
@@ -94,6 +94,6 @@ Example in python:
 A signed request against ``DivisionCall`` would have the parameters ``{'dividend': 5, 'divisor': 2, 'key': generated_key, 'sign': hmac_sign}``
 
 Documentation
------
+-------------
 Visit ``/api/discover`` for a brief documentation of the registered API-calls.
 
