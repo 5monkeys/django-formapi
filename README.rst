@@ -75,6 +75,45 @@ An invalid call with the parameters ``{'dividend': "five", 'divisor': 2}`` would
   {"errors": {"dividend": ["Enter a number."]}, "data": false, "success": false}
 
 
+You can use ``django-formapi`` to edit or update database objects too:
+
+.. code:: python
+
+  class UserCall(calls.APIModelCall):
+
+      """
+      Returns a serialized user
+      """
+
+      class Meta:
+          model = User
+          fields = ('username', 'first_name', 'last_name')
+
+  API.register(UserCall, 'auth', 'user', version='v1.0.0')
+
+If your request has the param ``__instance_pk`` (this param is customizable) then the api will edit this object. If the request does not have this param the api will create an object in database.
+
+It's very common that in your form you need the request: the authenticated user, the cookies, the session, etc. For this case you can add ``request_passed`` attr in your call:
+
+
+.. code:: python
+
+  class MyCall(calls.APICall):
+      ...
+
+      request_passed = True
+
+      def __init__(self, request, *args, **kwargs):
+          super(MyCall, self).__init__(*args, **kwargs)
+          self.request = request
+
+      def action(self, test):
+          user = self.request.user
+          ....
+
+  API.register(MyCall, 'mynamespace', 'mycall', version='v1.0.0')
+
+
 Authentication
 --------------
 By default ``APICalls`` have HMAC-authentication turned on. Disable it by setting ``signed_requests = False`` on your ``APICall``.

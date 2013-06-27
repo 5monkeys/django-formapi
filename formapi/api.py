@@ -1,12 +1,16 @@
-from collections import defaultdict
-from decimal import Decimal
+import datetime
 import decimal
 import hmac
+import itertools
 import logging
 import urllib2
+
+from collections import defaultdict
+from decimal import Decimal
 from hashlib import sha1
 from json import dumps, loads, JSONEncoder
-import datetime
+
+from django.db.models.query import QuerySet, ValuesQuerySet
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse, Http404
@@ -16,9 +20,8 @@ from django.utils.encoding import force_unicode
 from django.utils.importlib import import_module
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
-from django.db.models.query import QuerySet, ValuesQuerySet
 from django.utils.functional import curry, Promise
-import itertools
+
 from .models import APIKey
 
 LOG = logging.getLogger('formapi')
@@ -83,11 +86,13 @@ class API(FormView):
     template_name = 'formapi/api/form.html'
     signed_requests = True
     call_mapping = defaultdict(lambda: defaultdict(dict))
+    request_passed = False
+    request_kwarg = 'request'
 
     @classmethod
     def register(cls, call_cls, namespace, name=None, version='beta'):
         call_name = name or call_cls.__name__
-        API.call_mapping[version][namespace][call_name] = call_cls
+        cls.call_mapping[version][namespace][call_name] = call_cls
 
     @classonlymethod
     def as_view(cls, **initkwargs):
@@ -96,9 +101,22 @@ class API(FormView):
 
     def get_form_class(self):
         try:
-            return API.call_mapping[self.version][self.namespace][self.call]
+            return self.call_mapping[self.version][self.namespace][self.call]
         except KeyError:
             raise Http404
+
+    def get_form_kwargs(self):
+        kwargs = super(API, self).get_form_kwargs()
+        form_class = self.get_form_class()
+        if getattr(form_class, 'request_passed', self.request_passed):
+            request_kwarg = getattr(form_class, 'request_kwarg', self.request_kwarg)
+            kwargs[request_kwarg] = self.request
+        get_instance = getattr(form_class, 'get_instance', None)
+        if get_instance:
+            instance = get_instance(self.request)
+            if instance:
+                kwargs['instance'] = instance
+        return kwargs
 
     def get_access_params(self):
         key = self.request.REQUEST.get('key')
@@ -107,7 +125,7 @@ class API(FormView):
 
     def sign_ok(self, sign):
         pairs = ((field, self.request.REQUEST.get(field))
-                 for field in sorted(self.get_form_class()().fields.keys()))
+                 for field in sorted(self.get_form_class()(**self.get_form_kwargs()).fields.keys()))
         filtered_pairs = itertools.ifilter(lambda x: x[1] is not None, pairs)
         query_string = '&'.join(('='.join(pair) for pair in filtered_pairs))
         query_string = urllib2.quote(query_string.encode('utf-8'))
@@ -157,7 +175,7 @@ class API(FormView):
         self.log = AddHeaderAdapter(log, {'header': self.get_log_header()})
 
     def authorize(self):
-        if getattr(self.get_form_class(), 'signed_requests', API.signed_requests):
+        if getattr(self.get_form_class(), 'signed_requests', self.signed_requests):
             key, sign = self.get_access_params()
             ### Check for not revoked api key
             try:
@@ -173,7 +191,6 @@ class API(FormView):
     def dispatch(self, request, *args, **kwargs):
         # Set up request
         self.request = request
-
         # Set up form class
         self.version = kwargs['version']
         self.namespace = kwargs['namespace']
