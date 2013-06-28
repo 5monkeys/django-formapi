@@ -100,6 +100,12 @@ class API(FormView):
         except KeyError:
             raise Http404
 
+    def get_form_kwargs(self):
+        kwargs = super(API, self).get_form_kwargs()
+        if self.api_key:
+            kwargs['api_key'] = self.api_key
+        return kwargs
+
     def get_access_params(self):
         key = self.request.REQUEST.get('key')
         sign = self.request.REQUEST.get('sign')
@@ -107,7 +113,7 @@ class API(FormView):
 
     def sign_ok(self, sign):
         pairs = ((field, self.request.REQUEST.get(field))
-                 for field in sorted(self.get_form_class()().fields.keys()))
+                 for field in sorted(self.get_form(self.get_form_class()).fields.keys()))
         filtered_pairs = itertools.ifilter(lambda x: x[1] is not None, pairs)
         query_string = '&'.join(('='.join(pair) for pair in filtered_pairs))
         query_string = urllib2.quote(query_string.encode('utf-8'))
