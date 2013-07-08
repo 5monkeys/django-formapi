@@ -1,5 +1,6 @@
 from django import forms
 from django.core import serializers
+from django.forms.forms import NON_FIELD_ERRORS
 from django.shortcuts import get_object_or_404
 
 
@@ -11,7 +12,7 @@ class BaseAPICall(object):
     def add_error(self, error_msg):
         errors = self.non_field_errors()
         errors.append(error_msg)
-        self._errors[forms.NON_FIELD_ERRORS] = errors
+        self._errors[NON_FIELD_ERRORS] = errors
 
     def action(self, test):
         raise NotImplementedError('APIForms must implement action(self, test)')
