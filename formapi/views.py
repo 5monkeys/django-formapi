@@ -17,4 +17,3 @@ def call(request, version, namespace, call_name):
         'docstring': form_class.__doc__
     }
     return render(request, 'formapi/api/call.html', context)
-

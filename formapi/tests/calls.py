@@ -89,6 +89,3 @@ class ProgrammingLanguages(calls.APICall):
 API.register(AuthenticateUserCall, 'user', 'authenticate', version='v1.0.0')
 API.register(DivisionCall, 'math', 'divide', version='v1.0.0')
 API.register(ProgrammingLanguages, 'comp', 'lang', version='v1.0.0')
-
-
-
