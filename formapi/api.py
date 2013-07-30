@@ -210,6 +210,6 @@ class API(FormView):
             return super(API, self).dispatch(request, *args, **kwargs)
 
         # Access denied
-        self.log.info('Access Denied %s', self.request.REQUEST)
+        self.log.warning('Access Denied %s', self.request.REQUEST)
 
         return HttpResponse(status=401)

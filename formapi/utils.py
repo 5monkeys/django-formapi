@@ -9,7 +9,7 @@ def get_sign(secret, querystring=None, **params):
     Return sign for querystring.
 
     Logic:
-    - Sort querystring by parameter keys
+    - Sort querystring by parameter keys and by value if two or more parameter keys share the same name
     - URL encode sorted querystring
     - Generate a hex digested hmac/sha1 hash using given secret
     """
