@@ -112,8 +112,7 @@ class API(FormView):
         return key, sign
 
     def sign_ok(self, sign):
-        pairs = ((field, self.request.REQUEST.get(field))
-                 for field in sorted(self.get_form(self.get_form_class()).fields.keys()))
+        pairs = self.normalized_parameters()
         filtered_pairs = itertools.ifilter(lambda x: x[1] is not None, pairs)
         query_string = '&'.join(('='.join(pair) for pair in filtered_pairs))
         query_string = urllib2.quote(query_string.encode('utf-8'))
@@ -122,6 +121,20 @@ class API(FormView):
             query_string,
             sha1).hexdigest()
         return constant_time_compare(sign, digest)
+
+    def normalized_parameters(self):
+        """
+        Normalize django request to key value pairs sorted by key first and then value
+        """
+        for field in sorted(self.get_form(self.get_form_class()).fields.keys()):
+            value = self.request.REQUEST.getlist(field) or None
+            if not value:
+                continue
+            if len(value) == 1:
+                yield field, value[0]
+            else:
+                for item in sorted(value):
+                    yield field, item
 
     def render_to_json_response(self, context, **response_kwargs):
         data = dumps(context)

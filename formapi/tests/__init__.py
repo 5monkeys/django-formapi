@@ -23,6 +23,7 @@ class SignedRequestTest(TransactionTestCase):
         self.user.set_password("rosebud")
         self.user.save()
         self.authenticate_url = '/api/v1.0.0/user/authenticate/'
+        self.language_url = '/api/v1.0.0/comp/lang/'
 
     def send_request(self, url, data, key=None, secret=None, req_method="POST"):
         if not key:
@@ -42,8 +43,8 @@ class SignedRequestTest(TransactionTestCase):
 
     def test_valid_auth(self):
         response = self.send_request(self.authenticate_url, {'username': self.user.username, 'password': 'rosebud'})
-        response_data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
         self.assertEqual(response_data['errors'], {})
         self.assertTrue(response_data['success'])
         self.assertIsNotNone(response_data['data'])
@@ -66,7 +67,7 @@ class SignedRequestTest(TransactionTestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_invalid_password(self):
-        data = {'username': self.user.username, 'password': '1337haxx'}
+        data = {'username': self.user.username, 'password': '1337hax/x'}
         response = self.send_request(self.authenticate_url, data)
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(response.content)
@@ -87,6 +88,11 @@ class SignedRequestTest(TransactionTestCase):
     def test_get_call(self):
         data = {'username': self.user.username, 'password': '1337haxx'}
         response = self.send_request(self.authenticate_url, data, req_method='GET')
+        self.assertEqual(response.status_code, 200)
+
+    def test_multiple_values(self):
+        data = {'languages': ['python', 'java']}
+        response = self.send_request(self.language_url, data, req_method='GET')
         self.assertEqual(response.status_code, 200)
 
 
