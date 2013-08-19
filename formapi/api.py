@@ -75,6 +75,8 @@ class DjangoJSONEncoder(JSONEncoder):
             if obj.microsecond:
                 r = r[:12]
             return r
+        elif isinstance(obj, datetime.timedelta):
+            return obj.seconds
 
 dumps = curry(dumps, cls=DjangoJSONEncoder)
 
