@@ -43,7 +43,7 @@ class DjangoJSONEncoder(JSONEncoder):
 
     def default(self, obj):
         date_obj = self.default_date(obj)
-        if date_obj:
+        if date_obj is not None:
             return date_obj
         elif isinstance(obj, decimal.Decimal):
             return str(obj)
