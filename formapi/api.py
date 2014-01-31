@@ -43,7 +43,7 @@ class DjangoJSONEncoder(JSONEncoder):
 
     def default(self, obj):
         date_obj = self.default_date(obj)
-        if date_obj:
+        if date_obj is not None:
             return date_obj
         elif isinstance(obj, decimal.Decimal):
             return str(obj)
@@ -75,6 +75,8 @@ class DjangoJSONEncoder(JSONEncoder):
             if obj.microsecond:
                 r = r[:12]
             return r
+        elif isinstance(obj, datetime.timedelta):
+            return obj.seconds
 
 dumps = curry(dumps, cls=DjangoJSONEncoder)
 
@@ -100,14 +102,19 @@ class API(FormView):
         except KeyError:
             raise Http404
 
+    def get_form_kwargs(self):
+        kwargs = super(API, self).get_form_kwargs()
+        if self.api_key:
+            kwargs['api_key'] = self.api_key
+        return kwargs
+
     def get_access_params(self):
         key = self.request.REQUEST.get('key')
         sign = self.request.REQUEST.get('sign')
         return key, sign
 
     def sign_ok(self, sign):
-        pairs = ((field, self.request.REQUEST.get(field))
-                 for field in sorted(self.get_form_class()().fields.keys()))
+        pairs = self.normalized_parameters()
         filtered_pairs = itertools.ifilter(lambda x: x[1] is not None, pairs)
         query_string = '&'.join(('='.join(pair) for pair in filtered_pairs))
         query_string = urllib2.quote(query_string.encode('utf-8'))
@@ -116,6 +123,20 @@ class API(FormView):
             query_string,
             sha1).hexdigest()
         return constant_time_compare(sign, digest)
+
+    def normalized_parameters(self):
+        """
+        Normalize django request to key value pairs sorted by key first and then value
+        """
+        for field in sorted(self.get_form(self.get_form_class()).fields.keys()):
+            value = self.request.REQUEST.getlist(field) or None
+            if not value:
+                continue
+            if len(value) == 1:
+                yield field, value[0]
+            else:
+                for item in sorted(value):
+                    yield field, item
 
     def render_to_json_response(self, context, **response_kwargs):
         data = dumps(context)
@@ -191,6 +212,6 @@ class API(FormView):
             return super(API, self).dispatch(request, *args, **kwargs)
 
         # Access denied
-        self.log.info('Access Denied %s', self.request.REQUEST)
+        self.log.warning('Access Denied %s', self.request.REQUEST)
 
         return HttpResponse(status=401)

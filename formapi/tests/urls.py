@@ -3,7 +3,4 @@ try:
 except ImportError:
     from django.conf.urls.defaults import patterns, url, include
 
-
-urlpatterns = patterns('',
-    url(r'^api/', include('formapi.urls')),
-)
+urlpatterns = patterns('', url(r'^api/', include('formapi.urls')))

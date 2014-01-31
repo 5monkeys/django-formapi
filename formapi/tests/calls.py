@@ -70,8 +70,22 @@ class DivisionCall(calls.APICall):
         except ZeroDivisionError:
             self.add_error("DIVISION BY ZERO, OH SHIIIIII")
 
+
+class ProgrammingLanguages(calls.APICall):
+    RUBY = 'ruby'
+    PYTHON = 'python'
+    JAVA = 'java'
+    LANGUAGES = (
+        (RUBY, 'Freshman'),
+        (PYTHON, 'Sophomore'),
+        (JAVA, 'Junior')
+    )
+    languages = forms.MultipleChoiceField(choices=LANGUAGES)
+
+    def action(self, test):
+        return u'Good for you'
+
+
 API.register(AuthenticateUserCall, 'user', 'authenticate', version='v1.0.0')
 API.register(DivisionCall, 'math', 'divide', version='v1.0.0')
-
-
-
+API.register(ProgrammingLanguages, 'comp', 'lang', version='v1.0.0')

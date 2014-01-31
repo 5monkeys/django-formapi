@@ -3,3 +3,4 @@ include LICENSE
 include README.rst
 recursive-include formapi/templates *
 recursive-include formapi/static *
+recursive-exclude formapi/tests *
