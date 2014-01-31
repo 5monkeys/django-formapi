@@ -6,6 +6,8 @@ Create JSON API:s with HMAC authentication and Django form-validation.
 .. image:: https://travis-ci.org/5monkeys/django-formapi.png?branch=master
     :target: http://travis-ci.org/5monkeys/django-formapi
 
+.. image:: https://coveralls.io/repos/5monkeys/django-formapi/badge.png 
+    :target: https://coveralls.io/r/5monkeys/django-formapi
 
 Installation
 ------------
