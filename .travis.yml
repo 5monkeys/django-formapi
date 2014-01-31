@@ -29,12 +29,13 @@ install:
   - make install
 
 script:
-  - make flake8
-  - python setup.py test
+  - make flake8 test
 
 after_script:
   - if [ $COVERALLS == "true" ]; then
-    pip install --quiet --use-mirrors coveralls
+    pip install --quiet --use-mirrors python-coveralls
+    make coverage;
+    coverage report;
     coveralls;
     fi
 
