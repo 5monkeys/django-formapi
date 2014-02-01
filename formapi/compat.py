@@ -1,8 +1,8 @@
 # coding=utf-8
 # flake8: noqa
-import six
+import sys
 
-if six.PY3:
+if sys.version_info[0] == 3:
     from django.utils.encoding import smart_bytes as smart_str, force_str as force_unicode
     from urllib.parse import quote
     basestring = (str, bytes)
