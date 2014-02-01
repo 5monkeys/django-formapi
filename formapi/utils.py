@@ -1,7 +1,7 @@
+# coding=utf-8
 import hmac
-import urllib2
 from hashlib import sha1
-from django.utils.encoding import smart_str, force_unicode
+from .compat import force_unicode, smart_str, quote, basestring
 
 
 def get_sign(secret, querystring=None, **params):
@@ -22,7 +22,7 @@ def get_sign(secret, querystring=None, **params):
         else:
             try:
                 value = list(value)
-            except TypeError, e:
+            except TypeError as e:
                 assert 'is not iterable' in str(e)
                 value = smart_str(value)
                 sorted_params.append((key, value))
@@ -30,5 +30,5 @@ def get_sign(secret, querystring=None, **params):
                 sorted_params.extend((key, item) for item in sorted(value))
     param_list = ('='.join((field, force_unicode(value))) for field, value in sorted_params)
     validation_string = smart_str('&'.join(param_list))
-    validation_string = urllib2.quote(validation_string)
+    validation_string = quote(validation_string)
     return hmac.new(str(secret), validation_string, sha1).hexdigest()

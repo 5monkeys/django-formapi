@@ -1,5 +1,7 @@
+# coding=utf-8
 from django.db import models
 from uuidfield import UUIDField
+from .compat import unicode
 
 
 class APIKey(models.Model):

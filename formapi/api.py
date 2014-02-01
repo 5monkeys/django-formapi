@@ -1,9 +1,9 @@
+# coding=utf-8
 from collections import defaultdict
 from decimal import Decimal
 import decimal
 import hmac
 import logging
-import urllib2
 from hashlib import sha1
 from json import dumps, loads, JSONEncoder
 import datetime
@@ -12,14 +12,13 @@ from django.core import serializers
 from django.http import HttpResponse, Http404
 from django.utils.crypto import constant_time_compare
 from django.utils.decorators import method_decorator, classonlymethod
-from django.utils.encoding import force_unicode
 from django.utils.importlib import import_module
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 from django.db.models.query import QuerySet, ValuesQuerySet
 from django.utils.functional import curry, Promise
-import itertools
 from .models import APIKey
+from .compat import quote, force_unicode, ifilter
 
 LOG = logging.getLogger('formapi')
 
@@ -115,9 +114,9 @@ class API(FormView):
 
     def sign_ok(self, sign):
         pairs = self.normalized_parameters()
-        filtered_pairs = itertools.ifilter(lambda x: x[1] is not None, pairs)
+        filtered_pairs = ifilter(lambda x: x[1] is not None, pairs)
         query_string = '&'.join(('='.join(pair) for pair in filtered_pairs))
-        query_string = urllib2.quote(query_string.encode('utf-8'))
+        query_string = quote(query_string.encode('utf-8'))
         digest = hmac.new(
             str(self.api_key.secret),
             query_string,

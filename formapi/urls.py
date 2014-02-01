@@ -1,8 +1,6 @@
-try:
-    from django.conf.urls import patterns, url
-except ImportError:
-    from django.conf.urls.defaults import patterns, url
+# coding=utf-8
 from .api import API
+from .compat import patterns, url
 
 
 urlpatterns = patterns('',

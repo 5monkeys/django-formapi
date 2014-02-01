@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy
 from formapi.api import DjangoJSONEncoder
 from formapi.models import APIKey
 from formapi.utils import get_sign
+from ..compat import unicode
 
 
 class SignedRequestTest(TransactionTestCase):

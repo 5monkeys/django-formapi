@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 import codecs
 import os
@@ -16,7 +17,7 @@ setup(
             os.path.dirname(__file__),
             "README.rst"
         )
-    ).read(),
+    ).read().decode('utf8'),
     author="Hannes Ljungberg",
     author_email="hannes@5monkeys.se",
     url="http://github.com/5monkeys/django-formapi",
