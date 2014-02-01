@@ -20,9 +20,9 @@ matrix:
       env: DJANGO=1.4
   include:
     - python: 2.7
-      env: DJANGO=1.6 COVERALLS=true
+      env: DJANGO=1.6  COVERAGE=true
   allow_failures:
-    - env: COVERALLS=true
+    - env: COVERAGE=true
 
 install:
   - pip install --quiet --use-mirrors "Django>="$DJANGO",<"$DJANGO".99" flake8
@@ -32,7 +32,7 @@ script:
   - make flake8 test
 
 after_script:
-  - if [ $COVERALLS == "true" ]; then
+  - if [ $COVERAGE == "true" ]; then
     pip install --quiet --use-mirrors python-coveralls
     make coverage;
     coverage report;
