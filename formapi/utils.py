@@ -31,4 +31,4 @@ def get_sign(secret, querystring=None, **params):
     param_list = ('='.join((field, force_unicode(value))) for field, value in sorted_params)
     validation_string = smart_str('&'.join(param_list))
     validation_string = quote(validation_string)
-    return hmac.new(str(secret), validation_string, sha1).hexdigest()
+    return hmac.new(smart_str(secret), validation_string, sha1).hexdigest()
