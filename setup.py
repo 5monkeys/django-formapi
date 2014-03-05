@@ -44,6 +44,6 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[],
-    tests_require=['Django'],
+    tests_require=['Django', 'pytz'],
     test_suite='run_tests.main',
 )

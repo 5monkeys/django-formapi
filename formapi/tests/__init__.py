@@ -6,9 +6,9 @@ import json
 from django.contrib.auth.models import User
 from django.forms import IntegerField
 from django.test import TransactionTestCase, Client
-from django.utils import timezone
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy
+import pytz
 
 from formapi.api import DjangoJSONEncoder
 from formapi.compat import unicode
@@ -171,7 +171,7 @@ class JSONEncoderTest(TransactionTestCase):
         naive_second_datetime = {'datetime': datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
         self.dumps(naive_second_datetime)
 
-        tz_utc_datetime = {'datetime': datetime.now().replace(tzinfo=timezone.utc)}
+        tz_utc_datetime = {'datetime': datetime.now().replace(tzinfo=pytz.UTC)}
         self.dumps(tz_utc_datetime)
 
         datetime_date = {'datetime': date.today()}
