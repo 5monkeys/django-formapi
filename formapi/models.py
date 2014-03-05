@@ -18,4 +18,4 @@ class APIKey(models.Model):
         verbose_name_plural = 'API Keys'
 
     def __unicode__(self):
-        return u''.join((u'API Key (#', unicode(self.id), u')'))
+        return u'API Key #%s' % self.id

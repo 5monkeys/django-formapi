@@ -2,16 +2,18 @@
 from datetime import datetime, date, time
 from decimal import Decimal
 import json
+
 from django.contrib.auth.models import User
 from django.forms import IntegerField
 from django.test import TransactionTestCase, Client
 from django.utils import timezone
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy
+
 from formapi.api import DjangoJSONEncoder
+from formapi.compat import unicode
 from formapi.models import APIKey
 from formapi.utils import get_sign
-from ..compat import unicode
 
 
 class SignedRequestTest(TransactionTestCase):
