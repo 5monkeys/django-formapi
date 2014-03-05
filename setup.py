@@ -41,7 +41,7 @@ setup(
     ],
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['django-uuidfield'],
-    tests_require=['Django', 'django-uuidfield', 'pytz'],
+    install_requires=[],
+    tests_require=['Django'],
     test_suite='run_tests.main',
 )

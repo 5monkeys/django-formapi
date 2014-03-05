@@ -26,9 +26,6 @@ matrix:
 
 install:
   - pip install --quiet --use-mirrors "Django>="$DJANGO",<"$DJANGO".99" flake8
-  - if [ $TRAVIS_PYTHON_VERSION == '3.3' ]; then
-    pip install --quiet -U "https://github.com/5monkeys/django-uuidfield/archive/0.4.1.tar.gz";
-    fi
   - make install
 
 script:
