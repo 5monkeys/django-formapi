@@ -11,7 +11,12 @@ if sys.version_info[0] == 3:
     u_str = str
     iteritems = lambda dic: dic.items()
 else:
-    from django.utils.encoding import smart_str as smart_b, force_unicode as force_u, smart_text as smart_u
+    from django.utils.encoding import smart_str as smart_b, force_unicode as force_u
+    try:
+        from django.utils.encoding import smart_text as smart_u
+    except:
+        # Django 1.3
+        from django.utils.encoding import smart_unicode as smart_u
     # noinspection PyUnresolvedReferences
     from urllib2 import quote
     # noinspection PyUnresolvedReferences
