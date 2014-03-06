@@ -34,9 +34,9 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'key': ('uuidfield.fields.UUIDField', [], {'unique': 'True', 'max_length': '32', 'blank': 'True'}),
+            'key': ('formapi.fields.UUIDField', [], {'unique': 'True', 'max_length': '32', 'blank': 'True'}),
             'revoked': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'secret': ('uuidfield.fields.UUIDField', [], {'unique': 'True', 'max_length': '32', 'blank': 'True'}),
+            'secret': ('formapi.fields.UUIDField', [], {'unique': 'True', 'max_length': '32', 'blank': 'True'}),
             'test': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         }
     }

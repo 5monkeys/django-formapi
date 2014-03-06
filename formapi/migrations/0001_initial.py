@@ -12,8 +12,8 @@ class Migration(SchemaMigration):
         db.create_table('formapi_apikey', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
-            ('key', self.gf('uuidfield.fields.UUIDField')(unique=True, max_length=32, blank=True)),
-            ('secret', self.gf('uuidfield.fields.UUIDField')(unique=True, max_length=32, blank=True)),
+            ('key', self.gf('formapi.fields.UUIDField')(unique=True, max_length=32, blank=True)),
+            ('secret', self.gf('formapi.fields.UUIDField')(unique=True, max_length=32, blank=True)),
             ('comment', self.gf('django.db.models.fields.TextField')(null=True, blank=True)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
@@ -32,8 +32,8 @@ class Migration(SchemaMigration):
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'key': ('uuidfield.fields.UUIDField', [], {'unique': 'True', 'max_length': '32', 'blank': 'True'}),
-            'secret': ('uuidfield.fields.UUIDField', [], {'unique': 'True', 'max_length': '32', 'blank': 'True'})
+            'key': ('formapi.fields.UUIDField', [], {'unique': 'True', 'max_length': '32', 'blank': 'True'}),
+            'secret': ('formapi.fields.UUIDField', [], {'unique': 'True', 'max_length': '32', 'blank': 'True'})
         }
     }
 

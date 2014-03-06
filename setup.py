@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# coding=utf-8
 
 import codecs
 import os
@@ -16,7 +17,7 @@ setup(
             os.path.dirname(__file__),
             "README.rst"
         )
-    ).read(),
+    ).read().decode('utf8'),
     author="Hannes Ljungberg",
     author_email="hannes@5monkeys.se",
     url="http://github.com/5monkeys/django-formapi",
@@ -29,6 +30,8 @@ setup(
         'Programming Language :: Python :: 2',
         "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.3",
         'Framework :: Django',
         "Natural Language :: English",
         "Environment :: Web Environment",
@@ -40,7 +43,7 @@ setup(
     ],
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['django-uuidfield'],
-    tests_require=['Django', 'django-uuidfield', 'pytz'],
+    install_requires=[],
+    tests_require=['Django', 'pytz'],
     test_suite='run_tests.main',
 )

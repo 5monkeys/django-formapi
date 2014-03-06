@@ -13,7 +13,7 @@ class APICall(forms.Form):
         self._errors.setdefault(field_name, self.error_class()).append(error_msg)
 
     def clean(self):
-        for name, data in self.cleaned_data.iteritems():
+        for name, data in self.cleaned_data.items():
             setattr(self, name, data)
         return super(APICall, self).clean()
 

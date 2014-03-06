@@ -1,6 +1,4 @@
-try:
-    from django.conf.urls import patterns, url, include
-except ImportError:
-    from django.conf.urls.defaults import patterns, url, include
+# coding=utf-8
+from ..compat import include, patterns, url
 
 urlpatterns = patterns('', url(r'^api/', include('formapi.urls')))

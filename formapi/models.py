@@ -1,11 +1,12 @@
+# coding=utf-8
 from django.db import models
-from uuidfield import UUIDField
+from .fields import UUIDField
 
 
 class APIKey(models.Model):
     email = models.EmailField(blank=False, null=False)
-    key = UUIDField(auto=True, version=4)
-    secret = UUIDField(auto=True, version=4)
+    key = UUIDField()
+    secret = UUIDField()
     comment = models.TextField(blank=True, null=True)
     revoked = models.BooleanField(default=False)
     test = models.BooleanField(default=False)
@@ -17,4 +18,4 @@ class APIKey(models.Model):
         verbose_name_plural = 'API Keys'
 
     def __unicode__(self):
-        return u''.join((u'API Key (#', unicode(self.id), u')'))
+        return u'API Key #%s' % self.id
