@@ -3,18 +3,23 @@
 import sys
 
 if sys.version_info[0] == 3:
-    from django.utils.encoding import smart_bytes as smart_str, force_str as force_unicode
+    from django.utils.encoding import smart_bytes as smart_b, force_str as force_u, smart_text as smart_u
     # noinspection PyUnresolvedReferences
     from urllib.parse import quote
-    basestring = (str, bytes)
     ifilter = filter
-    unicode = str
+    b_str = bytes
+    u_str = str
+    iteritems = lambda dic: dic.items()
 else:
-    from django.utils.encoding import smart_str, force_unicode
+    from django.utils.encoding import smart_str as smart_b, force_unicode as force_u, smart_text as smart_u
+    # noinspection PyUnresolvedReferences
     from urllib2 import quote
+    # noinspection PyUnresolvedReferences
     from itertools import ifilter
-    basestring = basestring
-    unicode = unicode
+    b_str = str
+    # noinspection PyUnresolvedReferences
+    u_str = unicode
+    iteritems = lambda dic: dic.iteritems()
 
 try:
     from django.conf.urls import patterns, url, include
@@ -24,4 +29,4 @@ except ImportError:
 
 
 # Calm down unused import warnings:
-assert [smart_str, force_unicode, quote, ifilter]
+assert [smart_b, smart_u, force_u, quote, ifilter]

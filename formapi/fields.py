@@ -1,4 +1,5 @@
 # coding=utf-8
+import re
 import uuid
 from django import forms
 from django.db import models
@@ -8,6 +9,11 @@ try:
     extras.register_uuid()
 except (ImportError, AttributeError):
     pass
+
+
+def uuid_validator(value):
+    if re.search('[^a-f0-9]+', value):
+        raise forms.ValidationError(u"Invalid UUID value")
 
 
 class UUIDField(models.Field):
@@ -41,7 +47,16 @@ class UUIDField(models.Field):
         return str(value) if value else None
 
     def formfield(self, **kwargs):
-        kwargs.update(form_class=forms.CharField, max_length=self.max_length)
+        kwargs.update(
+            form_class=forms.CharField,
+            max_length=self.max_length,
+            min_length=self.max_length,
+            validators=[
+                uuid_validator,
+                forms.validators.MaxLengthValidator,
+                forms.validators.MinLengthValidator,
+            ],
+        )
         return super(UUIDField, self).formfield(**kwargs)
 
 

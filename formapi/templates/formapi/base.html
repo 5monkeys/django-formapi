@@ -23,13 +23,13 @@
             <div class="span3">
                 <div class="well sidebar-nav">
                     <ul class="nav nav-list">
-                        {% for version, namespaces in mapping.iteritems %}
+                        {% for version, namespaces in mapping.items %}
                             <li class="nav-header">{{ version }}</li>
                             <li class="divider"></li>
                             {% with namespaces|as_dict as namespace_dict %}
-                                {% for namespace, calls in namespace_dict.iteritems %}
+                                {% for namespace, calls in namespace_dict.items %}
                                     <li class="nav-header">{{ namespace }}</li>
-                                    {% for name, class in calls.iteritems %}
+                                    {% for name, class in calls.items %}
                                         <li><a href="{% url "api_call" version namespace name %}">{{ name }}</a></li>
                                     {% endfor %}
                                 {% endfor %}
