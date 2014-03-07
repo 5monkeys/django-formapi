@@ -18,7 +18,7 @@ from django.utils.functional import curry, Promise
 
 from .compat import force_u
 from .models import APIKey
-from .utils import get_pairs_sign
+from .utils import get_pairs_sign, prepare_uuid_string
 
 LOG = logging.getLogger('formapi')
 
@@ -116,6 +116,8 @@ class API(FormView):
 
     def sign_ok(self, sign):
         digest = get_pairs_sign(secret=self.api_key.secret, sorted_pairs=self.normalized_parameters())
+        digest = prepare_uuid_string(digest)
+        sign = prepare_uuid_string(sign)
         return constant_time_compare(sign, digest)
 
     def normalized_parameters(self):

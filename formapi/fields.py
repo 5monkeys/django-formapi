@@ -3,6 +3,7 @@ import re
 import uuid
 from django import forms
 from django.db import models
+from .utils import prepare_uuid_string
 
 try:
     from psycopg2 import extras
@@ -37,14 +38,14 @@ class UUIDField(models.Field):
         return value
 
     def get_db_prep_value(self, value, connection, prepared=False):
-        return str(value) if isinstance(value, uuid.UUID) else value or None
+        return prepare_uuid_string(value)
 
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
-        return str(value or '')
+        return prepare_uuid_string(value, default='')
 
     def to_python(self, value):
-        return str(value) if value else None
+        return prepare_uuid_string(value)
 
     def formfield(self, **kwargs):
         kwargs.update(

@@ -1,6 +1,7 @@
 # coding=utf-8
+import hashlib
 import hmac
-from hashlib import sha1
+import uuid
 from .compat import force_u, smart_b, quote, b_str, u_str, smart_u
 
 
@@ -35,4 +36,13 @@ def get_pairs_sign(secret, sorted_pairs):
     param_list = ('='.join((field, force_u(value))) for field, value in sorted_pairs)
     validation_string = smart_b('&'.join(param_list))
     validation_string = smart_b(quote(validation_string))
-    return hmac.new(smart_b(secret), validation_string, sha1).hexdigest()
+    return hmac.new(smart_b(secret), validation_string, hashlib.sha1).hexdigest()
+
+
+def prepare_uuid_string(value, default=None):
+    if isinstance(value, uuid.UUID):
+        value = value.hex
+    if not value:
+        return default
+    value = str(value).replace('-', '').strip().lower()
+    return value
