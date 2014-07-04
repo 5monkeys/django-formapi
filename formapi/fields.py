@@ -1,9 +1,38 @@
-# coding=utf-8
+import os
+import base64
+
+from django.db import models
+
+
+def key_generator(length):
+    if length & 0b11:
+        raise ValueError('key length must be multiple of 4')
+    return lambda: base64.urlsafe_b64encode(os.urandom(length * 6 / 8))
+
+
+class KeyField(models.CharField):
+    def __init__(self, **kwargs):
+        kwargs.setdefault('unique', True)
+
+        if 'default' not in kwargs:
+            generated_key_length = kwargs.pop('generated_key_length', kwargs['max_length'])
+            kwargs['default'] = key_generator(generated_key_length)
+        elif 'generated_key_length' in kwargs:
+            raise ValueError('generated_key_length and default cannot '
+                             'be set simultaneously')
+
+        super(KeyField, self).__init__(**kwargs)
+
+
+# TODO Remove UUIDField. Remains for backward
+# compatibility with South migrations.
+
+
 import re
 import uuid
 from django import forms
-from django.db import models
 from .utils import prepare_uuid_string
+
 
 try:
     from psycopg2 import extras
@@ -63,6 +92,7 @@ class UUIDField(models.Field):
 
 try:
     from south.modelsinspector import add_introspection_rules
-    add_introspection_rules([], [r"^formapi\.fields\.UUIDField"])
 except ImportError:
     pass
+else:
+    add_introspection_rules([], [r"^formapi\.fields\.(?:Key|UUID)Field"])

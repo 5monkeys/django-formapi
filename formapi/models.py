@@ -1,12 +1,13 @@
 # coding=utf-8
+
 from django.db import models
-from .fields import UUIDField
+from .fields import KeyField
 
 
 class APIKey(models.Model):
     email = models.EmailField(blank=False, null=False)
-    key = UUIDField()
-    secret = UUIDField()
+    key = KeyField(max_length=32, generated_key_length=16, unique=True)
+    secret = KeyField(max_length=32, unique=True)
     comment = models.TextField(blank=True, null=True)
     revoked = models.BooleanField(default=False)
     test = models.BooleanField(default=False)
@@ -19,3 +20,4 @@ class APIKey(models.Model):
 
     def __unicode__(self):
         return u'API Key #%s' % self.id
+
