@@ -1,8 +1,10 @@
 # coding=utf-8
+import django
 
 
 def pytest_configure():
     from django.conf import settings
+
     settings.configure(
         INSTALLED_APPS=[
             'django.contrib.auth',
@@ -23,5 +25,10 @@ def pytest_configure():
         ROOT_URLCONF='formapi.tests.urls',
         DEBUG=True,
         TEMPLATE_DEBUG=True,
+        SECRET_KEY="qqweqj=mibkpdz*%bob9-DJEDI-52x(%49rqgv8gg45k36231qwadaaa",
     )
+
+    if hasattr(django, 'setup'):
+        django.setup()
+
     return settings
