@@ -171,12 +171,12 @@ class API(FormView):
     def authorize(self):
         if getattr(self.get_form_class(), 'signed_requests', API.signed_requests):
             key, sign = self.get_access_params()
-            ### Check for not revoked api key
+            # Check for not revoked api key
             try:
                 self.api_key = APIKey.objects.get(key=key, revoked=False)
             except APIKey.DoesNotExist:
                 return False
-            ### Check request signature
+            # Check request signature
             return self.sign_ok(sign)
 
         return True
