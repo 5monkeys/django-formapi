@@ -10,7 +10,11 @@ from django.core import serializers
 from django.http import HttpResponse, Http404
 from django.utils.crypto import constant_time_compare
 from django.utils.decorators import method_decorator, classonlymethod
-from django.utils.importlib import import_module
+# Django 1.9
+try:
+    from django.utils.importlib import import_module
+except ImportError:
+    from importlib import import_module
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 from django.db.models.query import QuerySet, ValuesQuerySet
@@ -171,12 +175,12 @@ class API(FormView):
     def authorize(self):
         if getattr(self.get_form_class(), 'signed_requests', API.signed_requests):
             key, sign = self.get_access_params()
-            ### Check for not revoked api key
+            # Check for not revoked api key
             try:
                 self.api_key = APIKey.objects.get(key=key, revoked=False)
             except APIKey.DoesNotExist:
                 return False
-            ### Check request signature
+            # Check request signature
             return self.sign_ok(sign)
 
         return True

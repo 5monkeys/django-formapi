@@ -1,4 +1,5 @@
 # coding=utf-8
+import django
 
 
 def pytest_configure():
@@ -15,13 +16,18 @@ def pytest_configure():
         DATABASES={
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': ':memory:',
+                'NAME': ':memory:'
             }
         },
         MEDIA_ROOT='/tmp/formapi/',
         MEDIA_PATH='/media/',
         ROOT_URLCONF='formapi.tests.urls',
+        SECRET_KEY='qw%34231=hygcq4jqs&#b%9*8v(0weqzxf#$@$!@#!@#!@#-6we',
         DEBUG=True,
         TEMPLATE_DEBUG=True,
     )
+
+    if hasattr(django, 'setup'):
+        django.setup()
+
     return settings
