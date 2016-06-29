@@ -1,4 +1,5 @@
 # coding=utf-8
+import django
 from django.forms import forms
 
 
@@ -8,9 +9,12 @@ class APICall(forms.Form):
         super(APICall, self).__init__(*args, **kwargs)
         self.api_key = api_key
 
-    def add_error(self, error_msg, field_name=forms.NON_FIELD_ERRORS):
-        # TODO: with Django master you would just raise ValidationError({field_name: error_msg})
-        self._errors.setdefault(field_name, self.error_class()).append(error_msg)
+    def add_error(self, error, field=forms.NON_FIELD_ERRORS):
+        if django.VERSION[:2] > (1, 6):
+            error, field = field, error
+            super(APICall, self).add_error(field, error)
+        else:
+            self._errors.setdefault(field, self.error_class()).append(error)
 
     def clean(self):
         for name, data in self.cleaned_data.items():
