@@ -3,22 +3,41 @@ django-formapi
 
 Create JSON API:s with HMAC authentication and Django form-validation.
 
-.. image:: https://travis-ci.org/5monkeys/django-formapi.png?branch=master
+.. image:: https://travis-ci.org/5monkeys/django-formapi.svg?branch=master
     :target: http://travis-ci.org/5monkeys/django-formapi
-.. image:: https://coveralls.io/repos/5monkeys/django-formapi/badge.png 
-    :target: https://coveralls.io/r/5monkeys/django-formapi
-.. image:: https://pypip.in/v/django-formapi/badge.png
+.. image:: https://coveralls.io/repos/github/5monkeys/django-formapi/badge.svg?branch=master
+    :target: https://coveralls.io/github/5monkeys/django-formapi?branch=master
+.. image:: https://badge.fury.io/py/django-formapi.svg
+    :target: https://badge.fury.io/py/django-formapi
+.. image:: https://img.shields.io/pypi/l/django-formapi.svg
     :target: https://pypi.python.org/pypi/django-formapi
-.. image:: https://pypip.in/d/django-formapi/badge.png
+.. image:: https://img.shields.io/pypi/wheel/django-formapi.svg
     :target: https://pypi.python.org/pypi/django-formapi
-.. image:: https://pypip.in/wheel/django-formapi/badge.png
+.. image:: https://img.shields.io/pypi/pyversions/django-formapi.svg
     :target: https://pypi.python.org/pypi/django-formapi
-.. image:: https://pypip.in/egg/django-formapi/badge.png
+.. image:: https://img.shields.io/pypi/dm/django-formapi.svg
     :target: https://pypi.python.org/pypi/django-formapi
-.. image:: https://pypip.in/license/django-formapi/badge.png
-    :target: https://pypi.python.org/pypi/django-formapi
-.. image:: https://d2weczhvl823v0.cloudfront.net/5monkeys/django-formapi/trend.png
-    :target: https://bitdeli.com/free
+
+
+Version compatibility
+---------------------
+
+See Travis-CI page for actual test results:
+https://travis-ci.org/5monkeys/django-formapi
+
+======  ==========  ===  ===  ===  ===  ===
+Django  Python 2.6  2.7  3.3  3.4  3.5  3.6
+======  ==========  ===  ===  ===  ===  ===
+ 1.3           Yes  Yes
+ 1.4           Yes  Yes
+ 1.5           Yes  Yes  Yes
+ 1.6           Yes  Yes  Yes
+ 1.7                Yes  Yes  Yes
+ 1.8                Yes  Yes  Yes  Yes  Yes
+ 1.9                Yes       Yes  Yes  Yes
+ 1.10               Yes       Yes  Yes  Yes
+======  ==========  ===  ===  ===  ===  ===
+
 
 Installation
 ------------
@@ -50,7 +69,7 @@ Add ``formapi.urls`` to your urls.py.
 Usage
 -----
 
-Go ahead and create a ``calls.py``. 
+Go ahead and create a ``calls.py``.
 
 .. code:: python
 
@@ -60,7 +79,7 @@ Go ahead and create a ``calls.py``.
       """
       dividend = forms.FloatField()
       divisor = forms.FloatField()
-  
+
       def action(self, test):
           dividend = self.cleaned_data.get('dividend')
           divisor = self.cleaned_data.get('divisor')
@@ -71,8 +90,8 @@ Go ahead and create a ``calls.py``.
 
 Just create a class like your regular Django Forms but inheriting from ``APICall``. Define the fields that your API-call
 should receive. The ``action`` method is called when your fields have been validated and what is returned will be JSON-encoded
-as a response to the API-caller. The ``API.register`` call takes your ``APICall``-class as first argument, the second argument is 
-the ``namespace`` the API-call should reside in, the third argument is the ``name`` of your call and the fourth the ``version``. 
+as a response to the API-caller. The ``API.register`` call takes your ``APICall``-class as first argument, the second argument is
+the ``namespace`` the API-call should reside in, the third argument is the ``name`` of your call and the fourth the ``version``.
 This will result in an url in the form of ``api/[version]/[namespace]/[call_name]/`` so we would get ``/api/v1.0.0/math/divide/``.
 
 A valid call with the parameters ``{'dividend': 5, 'divisor': 2}`` would result in this response:
@@ -93,13 +112,13 @@ Authentication
 By default ``APICalls`` have HMAC-authentication turned on. Disable it by setting ``signed_requests = False`` on your ``APICall``.
 
 If not disabled users of the API will have to sign their calls. To do this they need a ``secret`` generate, create a ``APIKey`` through the django
-admin interface. On save a personal ``secret`` and ``key`` will be generated for the API-user. 
+admin interface. On save a personal ``secret`` and ``key`` will be generated for the API-user.
 
 To build a call signature for the ``DivisonCall`` create a querystring of the calls parameters sorted by the keys ``dividend=5&divisor=2``. Create a HMAC using SHA1 hash function.
 Example in python:
 
 .. code:: python
-  
+
   import hmac
   from hashlib import sha1
   hmac_sign = hmac.new(secret, urllib2.quote('dividend=5&divisor=2'), sha1).hexdigest()
