@@ -1,7 +1,11 @@
 # coding=utf-8
+import django
 
 
 def pytest_configure():
+    import logging
+    logging.basicConfig(level=logging.ERROR)
+
     from django.conf import settings
     settings.configure(
         INSTALLED_APPS=[
@@ -10,7 +14,7 @@ def pytest_configure():
             'django.contrib.admin',
             'django.contrib.sessions',
             'formapi',
-            'formapi.tests',
+            'formapi.test_app',
         ],
         DATABASES={
             'default': {
@@ -18,10 +22,20 @@ def pytest_configure():
                 'NAME': ':memory:',
             }
         },
+        MIDDLEWARE_CLASSES=[],
         MEDIA_ROOT='/tmp/formapi/',
         MEDIA_PATH='/media/',
-        ROOT_URLCONF='formapi.tests.urls',
+        ROOT_URLCONF='formapi.test_app.urls',
+        SECRET_KEY='monkey',
         DEBUG=True,
         TEMPLATE_DEBUG=True,
+        TEMPLATES=[
+            {'APP_DIRS': True,
+             'BACKEND': 'django.template.backends.django.DjangoTemplates'},
+        ]
     )
+
+    if django.VERSION >= (1, 7):
+        django.setup()
+
     return settings

@@ -5,18 +5,18 @@ import decimal
 import logging
 from json import dumps, loads, JSONEncoder
 
+import django
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse, Http404
 from django.utils.crypto import constant_time_compare
 from django.utils.decorators import method_decorator, classonlymethod
-from django.utils.importlib import import_module
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
-from django.db.models.query import QuerySet, ValuesQuerySet
+from django.db.models.query import QuerySet
 from django.utils.functional import curry, Promise
 
-from .compat import force_u
+from .compat import force_u, import_module
 from .models import APIKey
 from .utils import get_pairs_sign, prepare_uuid_string
 
@@ -42,6 +42,13 @@ class DjangoJSONEncoder(JSONEncoder):
 
     def default(self, obj):
         date_obj = self.default_date(obj)
+
+        if django.VERSION < (1, 9):
+            from django.db.models.query import ValuesQuerySet
+        else:
+            class ValuesQuerySet(object):
+                pass
+
         if date_obj is not None:
             return date_obj
 
@@ -109,13 +116,21 @@ class API(FormView):
             kwargs['api_key'] = self.api_key
         return kwargs
 
+    def get_request_params(self):
+        if self.request.method == 'POST':
+            return self.request.POST
+        else:
+            return self.request.GET
+
     def get_access_params(self):
-        key = self.request.REQUEST.get('key')
-        sign = self.request.REQUEST.get('sign')
+        params = self.get_request_params()
+        key = params.get('key')
+        sign = params.get('sign')
         return key, sign
 
     def sign_ok(self, sign):
-        digest = get_pairs_sign(secret=self.api_key.secret, sorted_pairs=self.normalized_parameters())
+        digest = get_pairs_sign(secret=prepare_uuid_string(self.api_key.secret),
+                                sorted_pairs=self.normalized_parameters())
         digest = prepare_uuid_string(digest)
         sign = prepare_uuid_string(sign)
         return constant_time_compare(sign, digest)
@@ -125,7 +140,7 @@ class API(FormView):
         Normalize django request to key value pairs sorted by key first and then value
         """
         for field in sorted(self.get_form(self.get_form_class()).fields.keys()):
-            for item in sorted(self.request.REQUEST.getlist(field) or []):
+            for item in sorted(self.get_request_params().getlist(field) or []):
                 if item is not None:
                     yield field, item
 
@@ -171,12 +186,12 @@ class API(FormView):
     def authorize(self):
         if getattr(self.get_form_class(), 'signed_requests', API.signed_requests):
             key, sign = self.get_access_params()
-            ### Check for not revoked api key
+            # Check for not revoked api key
             try:
                 self.api_key = APIKey.objects.get(key=key, revoked=False)
             except APIKey.DoesNotExist:
                 return False
-            ### Check request signature
+            # Check request signature
             return self.sign_ok(sign)
 
         return True
@@ -199,10 +214,10 @@ class API(FormView):
 
         # Authorize request
         if access_granted:
-            self.log.info('Access Granted %s', self.request.REQUEST)
+            self.log.info('Access Granted %s', self.get_request_params())
             return super(API, self).dispatch(request, *args, **kwargs)
 
         # Access denied
-        self.log.warning('Access Denied %s', self.request.REQUEST)
+        self.log.warning('Access Denied %s', self.get_request_params())
 
         return HttpResponse(status=401)
