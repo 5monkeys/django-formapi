@@ -26,6 +26,7 @@ setup(
     keywords=["django", "formapi", "api", "rpc", "signed", "request", "form", "validation"],
     platforms=['any'],
     license='MIT',
+    entry_points={'console_scripts': ['curl-formapi = formapi.curl:main']},
     classifiers=[
         "Programming Language :: Python",
         'Programming Language :: Python :: 2',
