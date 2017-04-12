@@ -86,6 +86,7 @@ class DjangoJSONEncoder(JSONEncoder):
         elif isinstance(obj, datetime.timedelta):
             return obj.seconds
 
+
 dumps = curry(dumps, cls=DjangoJSONEncoder)
 
 

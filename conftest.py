@@ -31,7 +31,14 @@ def pytest_configure():
         TEMPLATE_DEBUG=True,
         TEMPLATES=[
             {'APP_DIRS': True,
-             'BACKEND': 'django.template.backends.django.DjangoTemplates'},
+             'BACKEND': 'django.template.backends.django.DjangoTemplates',
+             'OPTIONS': {
+                 'debug': True,
+                 'context_processors': [
+                     'django.contrib.auth.context_processors.auth',
+                     'django.template.context_processors.request',
+                 ]
+             }},
         ]
     )
 
