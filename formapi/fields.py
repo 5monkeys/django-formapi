@@ -42,6 +42,9 @@ class UUIDField(models.Field):
     def get_db_prep_value(self, value, connection, prepared=False):
         return prepare_uuid_string(value)
 
+    def from_db_value(self, value, expression, connection, context):
+        return prepare_uuid_string(value)
+
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
         return prepare_uuid_string(value, default='')

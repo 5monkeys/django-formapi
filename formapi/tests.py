@@ -15,7 +15,7 @@ from formapi.compat import smart_u, get_user_model
 from formapi.models import APIKey
 from formapi.utils import get_sign
 
-TOTAL_TESTS = 19
+TOTAL_TESTS = 20
 
 
 class SignedRequestTest(TransactionTestCase):
@@ -45,6 +45,17 @@ class SignedRequestTest(TransactionTestCase):
 
     def test_api_key(self):
         smart_u(self.api_key)
+
+    def test_api_key_gets_prepared_uuid_str_on_assignment(self):
+        from formapi.utils import prepare_uuid_string
+
+        # Intentionally get key again
+        test_key = APIKey.objects.get(email='test@example.com')
+
+        self.assertEqual(
+            test_key.key,
+            prepare_uuid_string(test_key.key)
+        )
 
     def test_valid_auth(self):
         response = self.send_request(self.authenticate_url, {'username': self.user.username, 'password': 'rosebud'})
