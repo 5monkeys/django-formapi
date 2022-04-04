@@ -2,88 +2,19 @@ sudo: false
 language: python
 
 python:
-  - 2.6
-  - 2.7
-  - 3.3
-  - 3.4
-  - 3.5
-  - 3.6-dev
+  - 3.6
 
 env:
   matrix:
-    - DJANGO=1.3
-    - DJANGO=1.4
-    - DJANGO=1.5
-    - DJANGO=1.6
-    - DJANGO=1.7
-    - DJANGO=1.8
-    - DJANGO=1.9
-    - DJANGO=1.10
+    - DJANGO=3.2
 
 matrix:
-  exclude:
-    - python: 2.6
-      env: DJANGO=1.7
-    - python: 2.6
-      env: DJANGO=1.8
-    - python: 2.6
-      env: DJANGO=1.9
-    - python: 2.6
-      env: DJANGO=1.10
-
-    - python: 3.3
-      env: DJANGO=1.3
-    - python: 3.3
-      env: DJANGO=1.4
-    - python: 3.3
-      env: DJANGO=1.9
-    - python: 3.3
-      env: DJANGO=1.10
-
-    - python: 3.4
-      env: DJANGO=1.3
-    - python: 3.4
-      env: DJANGO=1.4
-    - python: 3.4
-      env: DJANGO=1.5
-    - python: 3.4
-      env: DJANGO=1.6
-
-    - python: 3.5
-      env: DJANGO=1.3
-    - python: 3.5
-      env: DJANGO=1.4
-    - python: 3.5
-      env: DJANGO=1.5
-    - python: 3.5
-      env: DJANGO=1.6
-    - python: 3.5
-      env: DJANGO=1.7
-
-    - python: 3.6-dev
-      env: DJANGO=1.3
-    - python: 3.6-dev
-      env: DJANGO=1.4
-    - python: 3.6-dev
-      env: DJANGO=1.5
-    - python: 3.6-dev
-      env: DJANGO=1.6
-    - python: 3.6-dev
-      env: DJANGO=1.7
-
-  include:
-    - python: 3.5
-      env: DJANGO=1.8  COVERAGE=true
   allow_failures:
     - env: COVERAGE=true
 
 install:
   - pip install --quiet "Django>="$DJANGO",<"$DJANGO".99"
-  - if [ "$TRAVIS_PYTHON_VERSION" \< "2.7" ]; then
-    pip install "flake8<3";
-    else
-    pip install flake8;
-    fi
+  - pip install flake8;
   - make install
 
 script:
@@ -100,3 +31,4 @@ notifications:
   email:
     - hannes@5monkeys.se
     - andrei@5monkeys.se
+    - mika@5monkeys.se
