@@ -3,8 +3,8 @@ django-formapi
 
 Create JSON API:s with HMAC authentication and Django form-validation.
 
-.. image:: https://travis-ci.org/5monkeys/django-formapi.svg?branch=master
-    :target: http://travis-ci.org/5monkeys/django-formapi
+.. image:: https://travis-ci.com/5monkeys/django-formapi.svg?branch=master
+    :target: http://travis-ci.com/5monkeys/django-formapi
 .. image:: https://coveralls.io/repos/github/5monkeys/django-formapi/badge.svg?branch=master
     :target: https://coveralls.io/github/5monkeys/django-formapi?branch=master
 .. image:: https://badge.fury.io/py/django-formapi.svg
@@ -23,7 +23,7 @@ Version compatibility
 ---------------------
 
 See Travis-CI page for actual test results:
-https://travis-ci.org/5monkeys/django-formapi
+https://travis-ci.com/5monkeys/django-formapi
 
 ======  ===
 Django  3.6
