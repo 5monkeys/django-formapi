@@ -2,10 +2,7 @@
 
 import codecs
 import os
-<<<<<<< HEAD
 import sys
-=======
->>>>>>> 025c6fd (Update to django 3)
 
 from setuptools import find_packages, setup
 
@@ -13,11 +10,6 @@ import formapi
 
 readme = os.path.join(os.path.dirname(__file__), "README.rst")
 readme = codecs.open(readme).read()
-<<<<<<< HEAD
-if (3, 3) <= sys.version_info < (3, 4, 3):
-    readme = readme.decode("utf8")
-=======
->>>>>>> 025c6fd (Update to django 3)
 
 setup(
     name="django-formapi",
