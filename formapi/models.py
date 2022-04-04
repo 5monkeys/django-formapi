@@ -1,5 +1,5 @@
-# coding=utf-8
 from django.db import models
+
 from .fields import UUIDField
 
 
@@ -14,8 +14,8 @@ class APIKey(models.Model):
     # TODO add manytomany versions
 
     class Meta:
-        verbose_name = 'API Key'
-        verbose_name_plural = 'API Keys'
+        verbose_name = "API Key"
+        verbose_name_plural = "API Keys"
 
     def __unicode__(self):
-        return u'API Key #%s' % self.id
+        return "API Key #%s" % self.id

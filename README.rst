@@ -53,17 +53,17 @@ Add ``formapi`` to your ``INSTALLED_APPS`` setting.
 .. code:: python
 
     INSTALLED_APPS = (
-        ...
-        'formapi',
+        ...,
+        "formapi",
     )
 
 Add ``formapi.urls`` to your urls.py.
 
 .. code:: python
 
-  urlpatterns = patterns('',
-      ...
-      url(r'^api/', include('formapi.urls')),
+  urlpatterns = patterns(
+      ...,
+      url(r"^api/", include("formapi.urls")),
   )
 
 Usage
@@ -77,15 +77,17 @@ Go ahead and create a ``calls.py``.
       """
       Returns the quotient of two integers
       """
+
       dividend = forms.FloatField()
       divisor = forms.FloatField()
 
       def action(self, test):
-          dividend = self.cleaned_data.get('dividend')
-          divisor = self.cleaned_data.get('divisor')
+          dividend = self.cleaned_data.get("dividend")
+          divisor = self.cleaned_data.get("divisor")
           return dividend / divisor
 
-  API.register(DivisionCall, 'math', 'divide', version='v1.0.0')
+
+  API.register(DivisionCall, "math", "divide", version="v1.0.0")
 
 
 Just create a class like your regular Django Forms but inheriting from ``APICall``. Define the fields that your API-call
@@ -121,11 +123,11 @@ Example in python:
 
   import hmac
   from hashlib import sha1
-  hmac_sign = hmac.new(secret, urllib2.quote('dividend=5&divisor=2'), sha1).hexdigest()
+
+  hmac_sign = hmac.new(secret, urllib2.quote("dividend=5&divisor=2"), sha1).hexdigest()
 
 A signed request against ``DivisionCall`` would have the parameters ``{'dividend': 5, 'divisor': 2, 'key': generated_key, 'sign': hmac_sign}``
 
 Documentation
 -------------
 Visit ``/api/discover`` for a brief documentation of the registered API-calls.
-
