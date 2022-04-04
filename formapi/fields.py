@@ -1,7 +1,6 @@
 import re
 import uuid
 
-import django
 from django import forms
 from django.db import models
 
@@ -21,9 +20,6 @@ def uuid_validator(value):
 
 
 class UUIDField(models.Field):
-    if django.VERSION < (1, 10):
-        __metaclass__ = models.SubfieldBase
-
     def __init__(self, **kwargs):
         kwargs.update(max_length=32, editable=False, blank=True, unique=True)
         super().__init__(**kwargs)

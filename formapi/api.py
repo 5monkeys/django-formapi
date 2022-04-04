@@ -2,20 +2,21 @@ import datetime
 import decimal
 import logging
 from collections import defaultdict
+from functools import partial
+from importlib import import_module
 from json import JSONEncoder, dumps, loads
 
-import django
 from django.conf import settings
 from django.core import serializers
 from django.db.models.query import QuerySet
 from django.http import Http404, HttpResponse
 from django.utils.crypto import constant_time_compare
 from django.utils.decorators import classonlymethod, method_decorator
-from django.utils.functional import Promise, curry
+from django.utils.encoding import force_str
+from django.utils.functional import Promise
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
 
-from .compat import force_u, import_module
 from .models import APIKey
 from .utils import get_pairs_sign, prepare_uuid_string
 
@@ -40,27 +41,17 @@ class DjangoJSONEncoder(JSONEncoder):
     def default(self, obj):
         date_obj = self.default_date(obj)
 
-        if django.VERSION < (1, 9):
-            from django.db.models.query import ValuesQuerySet
-        else:
-
-            class ValuesQuerySet:
-                pass
-
         if date_obj is not None:
             return date_obj
 
         elif isinstance(obj, decimal.Decimal):
             return str(obj)
 
-        elif isinstance(obj, ValuesQuerySet):
-            return list(obj)
-
         elif isinstance(obj, QuerySet):
             return loads(serializers.serialize("json", obj))
 
         elif isinstance(obj, Promise):
-            return force_u(obj)
+            return force_str(obj)
 
         return JSONEncoder.default(self, obj)
 
@@ -85,7 +76,7 @@ class DjangoJSONEncoder(JSONEncoder):
             return obj.seconds
 
 
-dumps = curry(dumps, cls=DjangoJSONEncoder)
+dumps = partial(dumps, cls=DjangoJSONEncoder)
 
 
 class API(FormView):
@@ -213,7 +204,7 @@ class API(FormView):
         # Authorize request
         if access_granted:
             self.log.info("Access Granted %s", self.get_request_params())
-            return super().dispatch(request, *args, **kwargs)
+            return super(API, self).dispatch(request, *args, **kwargs)
 
         # Access denied
         self.log.warning("Access Denied %s", self.get_request_params())

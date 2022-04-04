@@ -1,9 +1,9 @@
+from django.conf.urls import url
+
 from . import views
 from .api import API
-from .compat import patterns, url
 
-urlpatterns = patterns(
-    "",
+urlpatterns = [
     url(r"discover/$", views.discover, name="api_discover"),
     url(
         r"call/(?P<version>.+)/(?P<namespace>\w+)/(?P<call_name>\w+)/$",
@@ -15,4 +15,4 @@ urlpatterns = patterns(
         API.as_view(),
         name="api_view",
     ),
-)
+]

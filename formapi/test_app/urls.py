@@ -1,3 +1,3 @@
-from ..compat import include, patterns, url
+from django.conf.urls import include, url
 
-urlpatterns = patterns("", url(r"^api/", include("formapi.urls")))
+urlpatterns = [url(r"^api/", include("formapi.urls"))]

@@ -1,10 +1,10 @@
 from django import forms
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
 from formapi import calls
 from formapi.api import API
-from formapi.compat import get_user_model
 
 
 class AuthenticateUserCall(calls.APICall):
@@ -28,7 +28,7 @@ class AuthenticateUserCall(calls.APICall):
         super().__init__(*args, **kwargs)
 
         # Set the label for the "username" field.
-        self.username_field = get_user_model()._meta.get_field("username")
+        self.username_field = User._meta.get_field("username")
 
     def action(self, test):
         return self.get_user_id()

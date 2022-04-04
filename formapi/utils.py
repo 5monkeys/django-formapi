@@ -1,8 +1,9 @@
 import hashlib
 import hmac
 import uuid
+from urllib.parse import quote
 
-from .compat import b_str, force_u, quote, smart_b, smart_u, u_str
+from django.utils.encoding import force_str, smart_bytes, smart_text
 
 
 def get_sign(secret, querystring=None, **params):
@@ -18,14 +19,14 @@ def get_sign(secret, querystring=None, **params):
         params = dict(param.split("=") for param in querystring.split("&"))
     sorted_params = []
     for key, value in sorted(params.items(), key=lambda x: x[0]):
-        if isinstance(value, (b_str, u_str)):
+        if isinstance(value, (bytes, str)):
             sorted_params.append((key, value))
         else:
             try:
                 value = list(value)
             except TypeError as e:
-                assert "is not iterable" in smart_u(e)
-                value = smart_b(value)
+                assert "is not iterable" in smart_text(e)
+                value = smart_bytes(value)
                 sorted_params.append((key, value))
             else:
                 sorted_params.extend((key, item) for item in sorted(value))
@@ -33,10 +34,10 @@ def get_sign(secret, querystring=None, **params):
 
 
 def get_pairs_sign(secret, sorted_pairs):
-    param_list = ("=".join((field, force_u(value))) for field, value in sorted_pairs)
-    validation_string = smart_b("&".join(param_list))
-    validation_string = smart_b(quote(validation_string))
-    return hmac.new(smart_b(secret), validation_string, hashlib.sha1).hexdigest()
+    param_list = ("=".join((field, force_str(value))) for field, value in sorted_pairs)
+    validation_string = smart_bytes("&".join(param_list))
+    validation_string = smart_bytes(quote(validation_string))
+    return hmac.new(smart_bytes(secret), validation_string, hashlib.sha1).hexdigest()
 
 
 def prepare_uuid_string(value, default=None):

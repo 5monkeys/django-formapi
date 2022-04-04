@@ -54,10 +54,10 @@ Add ``formapi.urls`` to your urls.py.
 
 .. code:: python
 
-  urlpatterns = patterns(
+  urlpatterns = [
       ...,
       url(r"^api/", include("formapi.urls")),
-  )
+  ]
 
 Usage
 -----
