@@ -19,16 +19,19 @@ TOTAL_TESTS = 19
 
 
 class SignedRequestTest(TransactionTestCase):
-
     def setUp(self):
         self.api_key = APIKey.objects.create(email="test@example.com")
-        self.api_key_revoked = APIKey.objects.create(email="test3@example.com", revoked=True)
+        self.api_key_revoked = APIKey.objects.create(
+            email="test3@example.com", revoked=True
+        )
         self.client = Client()
-        self.user = get_user_model().objects.create(email="user@example.com", username="räksmörgås")
+        self.user = get_user_model().objects.create(
+            email="user@example.com", username="räksmörgås"
+        )
         self.user.set_password("rosebud")
         self.user.save()
-        self.authenticate_url = '/api/v1.0.0/user/authenticate/'
-        self.language_url = '/api/v1.0.0/comp/lang/'
+        self.authenticate_url = "/api/v1.0.0/user/authenticate/"
+        self.language_url = "/api/v1.0.0/comp/lang/"
 
     def send_request(self, url, data, key=None, secret=None, req_method="POST"):
         if not key:
@@ -36,92 +39,102 @@ class SignedRequestTest(TransactionTestCase):
         if not secret:
             secret = self.api_key.secret
         sign = get_sign(secret, **data)
-        data['key'] = key
-        data['sign'] = sign
-        if req_method == 'POST':
+        data["key"] = key
+        data["sign"] = sign
+        if req_method == "POST":
             return self.client.post(url, data)
-        elif req_method == 'GET':
+        elif req_method == "GET":
             return self.client.get(url, data)
 
     def test_api_key(self):
         smart_u(self.api_key)
 
     def test_valid_auth(self):
-        response = self.send_request(self.authenticate_url, {'username': self.user.username, 'password': 'rosebud'})
+        response = self.send_request(
+            self.authenticate_url,
+            {"username": self.user.username, "password": "rosebud"},
+        )
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(smart_u(response.content))
-        self.assertEqual(response_data['errors'], {})
-        self.assertTrue(response_data['success'])
-        self.assertIsNotNone(response_data['data'])
+        self.assertEqual(response_data["errors"], {})
+        self.assertTrue(response_data["success"])
+        self.assertIsNotNone(response_data["data"])
 
     def test_invalid_call(self):
-        response = self.send_request('/api/v1.0.0/math/subtract/', {'username': self.user.username, 'password': 'rosebud'})
+        response = self.send_request(
+            "/api/v1.0.0/math/subtract/",
+            {"username": self.user.username, "password": "rosebud"},
+        )
         self.assertEqual(response.status_code, 404)
 
     def test_unsigned_auth(self):
-        data = {'username': self.user.username, 'password': 'rosebud'}
+        data = {"username": self.user.username, "password": "rosebud"}
         response = self.client.post(self.authenticate_url, data)
         self.assertEqual(response.status_code, 401)
 
     def test_invalid_sign(self):
-        data = {'username': self.user.username, 'password': 'rosebud'}
+        data = {"username": self.user.username, "password": "rosebud"}
         sign = get_sign(self.api_key.secret, **data)
-        data['key'] = self.api_key.key
-        data['sign'] = sign + "bug"
+        data["key"] = self.api_key.key
+        data["sign"] = sign + "bug"
         response = self.client.post(self.authenticate_url, data)
         self.assertEqual(response.status_code, 401)
 
     def test_invalid_password(self):
-        data = {'username': self.user.username, 'password': '1337hax/x'}
+        data = {"username": self.user.username, "password": "1337hax/x"}
         response = self.send_request(self.authenticate_url, data)
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(smart_u(response.content))
-        self.assertGreater(len(response_data['errors']), 0)
-        self.assertFalse(response_data['success'])
-        self.assertFalse(response_data['data'])
+        self.assertGreater(len(response_data["errors"]), 0)
+        self.assertFalse(response_data["success"])
+        self.assertFalse(response_data["data"])
 
     def test_invalid_parameters(self):
-        data = {'email': self.user.email, 'password': 'rosebud'}
+        data = {"email": self.user.email, "password": "rosebud"}
         response = self.send_request(self.authenticate_url, data)
         self.assertEqual(response.status_code, 401)
 
     def test_revoked_api_key(self):
-        data = {'username': self.user.username, 'password': 'rosebud'}
-        response = self.send_request(self.authenticate_url, data, self.api_key_revoked.key, self.api_key_revoked.secret)
+        data = {"username": self.user.username, "password": "rosebud"}
+        response = self.send_request(
+            self.authenticate_url,
+            data,
+            self.api_key_revoked.key,
+            self.api_key_revoked.secret,
+        )
         self.assertEqual(response.status_code, 401)
 
     def test_get_call(self):
-        data = {'username': self.user.username, 'password': '1337haxx'}
-        response = self.send_request(self.authenticate_url, data, req_method='GET')
+        data = {"username": self.user.username, "password": "1337haxx"}
+        response = self.send_request(self.authenticate_url, data, req_method="GET")
         self.assertEqual(response.status_code, 200)
 
     def test_multiple_values(self):
-        data = {'languages': ['python', 'java']}
-        response = self.send_request(self.language_url, data, req_method='GET')
+        data = {"languages": ["python", "java"]}
+        response = self.send_request(self.language_url, data, req_method="GET")
         self.assertEqual(response.status_code, 200)
 
 
 class HMACTest(TransactionTestCase):
-
     def setUp(self):
         self.api_key = APIKey.objects.create(email="test@example.com")
 
     def test_parameter_sign(self):
         # test unicode
-        url_params = u'first_name=mårten&last_name=superkebab'
-        dict_params = {'first_name': u'mårten', 'last_name': u'superkebab'}
+        url_params = u"first_name=mårten&last_name=superkebab"
+        dict_params = {"first_name": u"mårten", "last_name": u"superkebab"}
         self.assert_equal_signs(url_params, dict_params)
         # test string
-        url_params = 'first_name=mårten&last_name=superkebab'
-        dict_params = {'first_name': 'mårten', 'last_name': 'superkebab'}
+        url_params = "first_name=mårten&last_name=superkebab"
+        dict_params = {"first_name": "mårten", "last_name": "superkebab"}
         self.assert_equal_signs(url_params, dict_params)
         # test integer
-        url_params = u'dividend=4&divisor=2'
-        dict_params = {'dividend': 4, 'divisor': 2}
+        url_params = u"dividend=4&divisor=2"
+        dict_params = {"dividend": 4, "divisor": 2}
         self.assert_equal_signs(url_params, dict_params)
         # test boolean
-        url_params = u'secure=True'
-        dict_params = {'secure': True}
+        url_params = u"secure=True"
+        dict_params = {"secure": True}
         self.assert_equal_signs(url_params, dict_params)
 
     def assert_equal_signs(self, url_params, dict_params):
@@ -131,68 +144,70 @@ class HMACTest(TransactionTestCase):
 
 
 class UnsignedRequestTest(TransactionTestCase):
-
     def setUp(self):
         self.client = Client()
-        self.divide_url = '/api/v1.0.0/math/divide/'
+        self.divide_url = "/api/v1.0.0/math/divide/"
 
     def test_ok_call(self):
-        data = {'dividend': 7, 'divisor': 2}
+        data = {"dividend": 7, "divisor": 2}
         response = self.client.post(self.divide_url, data)
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(smart_u(response.content))
-        self.assertEqual(response_data['data'], 3.5)
+        self.assertEqual(response_data["data"], 3.5)
 
     def test_invalid_call(self):
-        data = {'dividend': "a", 'divisor': 2}
+        data = {"dividend": "a", "divisor": 2}
         response = self.client.post(self.divide_url, data)
         self.assertEqual(response.status_code, 400)
         response_data = json.loads(smart_u(response.content))
-        dividend_error = response_data['errors']['dividend']
-        self.assertEqual(dividend_error[0], smart_u(IntegerField().error_messages['invalid']))
-        self.assertGreater(len(response_data['errors']), 0)
-        self.assertFalse(response_data['success'])
-        self.assertFalse(response_data['data'])
+        dividend_error = response_data["errors"]["dividend"]
+        self.assertEqual(
+            dividend_error[0], smart_u(IntegerField().error_messages["invalid"])
+        )
+        self.assertGreater(len(response_data["errors"]), 0)
+        self.assertFalse(response_data["success"])
+        self.assertFalse(response_data["data"])
 
     def test_error_call(self):
-        data = {'dividend': "42", 'divisor': 0}
+        data = {"dividend": "42", "divisor": 0}
         response = self.client.post(self.divide_url, data)
         response_data = json.loads(smart_u(response.content))
-        self.assertFalse(response_data['success'])
+        self.assertFalse(response_data["success"])
 
 
 class JSONEncoderTest(TransactionTestCase):
-
     def setUp(self):
         self.dumps = curry(json.dumps, cls=DjangoJSONEncoder)
 
     def test_datetime_encode(self):
-        naive_micro_datetime = {'datetime': datetime.now(), 'int': 1}
+        naive_micro_datetime = {"datetime": datetime.now(), "int": 1}
         self.dumps(naive_micro_datetime)
 
-        naive_second_datetime = {'datetime': datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+        naive_second_datetime = {
+            "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
         self.dumps(naive_second_datetime)
 
-        tz_utc_datetime = {'datetime': datetime.now().replace(tzinfo=pytz.UTC)}
+        tz_utc_datetime = {"datetime": datetime.now().replace(tzinfo=pytz.UTC)}
         self.dumps(tz_utc_datetime)
 
-        datetime_date = {'datetime': date.today()}
+        datetime_date = {"datetime": date.today()}
         self.dumps(datetime_date)
 
-        naive_datetime_time = {'datetime': time()}
+        naive_datetime_time = {"datetime": time()}
         self.dumps(naive_datetime_time)
 
-        naive_datetime_micro_time = {'datetime': time(microsecond=100)}
+        naive_datetime_micro_time = {"datetime": time(microsecond=100)}
         self.dumps(naive_datetime_micro_time)
 
     def test_decimal_encode(self):
-        decimal_data = {'decimal': Decimal("1.504")}
+        decimal_data = {"decimal": Decimal("1.504")}
         self.dumps(decimal_data)
 
     def test_queryset(self):
         user_manager = get_user_model().objects
         user_manager.create(username="test", email="test@example.com")
-        queryset = {'queryset': user_manager.all()}
+        queryset = {"queryset": user_manager.all()}
         self.dumps(queryset)
         self.dumps(user_manager.all())
 
@@ -200,11 +215,11 @@ class JSONEncoderTest(TransactionTestCase):
         if django.VERSION < (1, 9):
             user_manager = get_user_model().objects
             user_manager.create(username="test", email="test@example.com")
-            values = user_manager.values('id', 'email')
+            values = user_manager.values("id", "email")
             self.dumps(values)
-            values_list = user_manager.values_list('id', flat=True)
+            values_list = user_manager.values_list("id", flat=True)
             self.dumps(values_list)
 
     def test_gettext(self):
-        gettext_data = {'gettext': ugettext_lazy(u'tränslate me please')}
+        gettext_data = {"gettext": ugettext_lazy(u"tränslate me please")}
         self.dumps(gettext_data)

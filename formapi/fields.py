@@ -8,13 +8,14 @@ from .utils import prepare_uuid_string
 
 try:
     from psycopg2 import extras
+
     extras.register_uuid()
 except (ImportError, AttributeError):
     pass
 
 
 def uuid_validator(value):
-    if re.search('[^a-f0-9]+', value):
+    if re.search("[^a-f0-9]+", value):
         raise forms.ValidationError(u"Invalid UUID value")
 
 
@@ -27,9 +28,9 @@ class UUIDField(models.Field):
         super(UUIDField, self).__init__(**kwargs)
 
     def db_type(self, connection=None):
-        if connection and 'postgres' in connection.vendor:
-            return 'uuid'
-        return 'char(%s)' % self.max_length
+        if connection and "postgres" in connection.vendor:
+            return "uuid"
+        return "char(%s)" % self.max_length
 
     def pre_save(self, model_instance, add):
         if add:
@@ -44,7 +45,7 @@ class UUIDField(models.Field):
 
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
-        return prepare_uuid_string(value, default='')
+        return prepare_uuid_string(value, default="")
 
     def to_python(self, value):
         return prepare_uuid_string(value)
@@ -65,6 +66,7 @@ class UUIDField(models.Field):
 
 try:
     from south.modelsinspector import add_introspection_rules
+
     add_introspection_rules([], [r"^formapi\.fields\.UUIDField"])
 except ImportError:
     pass

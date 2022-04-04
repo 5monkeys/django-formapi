@@ -11,13 +11,16 @@ class AuthenticateUserCall(calls.APICall):
     """
     Authenticate a user
     """
+
     username = forms.CharField(required=True)
     password = forms.CharField(required=True, widget=forms.PasswordInput)
 
     error_messages = {
-        'invalid_login': _("Please enter a correct %(username)s and password. "
-                           "Note that both fields may be case-sensitive."),
-        'inactive': _("This account is inactive.")
+        "invalid_login": _(
+            "Please enter a correct %(username)s and password. "
+            "Note that both fields may be case-sensitive."
+        ),
+        "inactive": _("This account is inactive."),
     }
 
     def __init__(self, *args, **kwargs):
@@ -25,24 +28,24 @@ class AuthenticateUserCall(calls.APICall):
         super(AuthenticateUserCall, self).__init__(*args, **kwargs)
 
         # Set the label for the "username" field.
-        self.username_field = get_user_model()._meta.get_field('username')
+        self.username_field = get_user_model()._meta.get_field("username")
 
     def action(self, test):
         return self.get_user_id()
 
     def clean(self):
         super(AuthenticateUserCall, self).clean()
-        username = self.cleaned_data.get('username')
-        password = self.cleaned_data.get('password')
+        username = self.cleaned_data.get("username")
+        password = self.cleaned_data.get("password")
         if username and password:
             self.user_cache = authenticate(username=username, password=password)
             if self.user_cache is None:
                 raise forms.ValidationError(
-                    self.error_messages['invalid_login'] % {
-                        'username': self.username_field.verbose_name
-                    })
+                    self.error_messages["invalid_login"]
+                    % {"username": self.username_field.verbose_name}
+                )
             elif not self.user_cache.is_active:
-                raise forms.ValidationError(self.error_messages['inactive'])
+                raise forms.ValidationError(self.error_messages["inactive"])
         return self.cleaned_data
 
     def get_user_id(self):
@@ -58,14 +61,15 @@ class DivisionCall(calls.APICall):
     """
     Returns the quotient of two integers
     """
+
     dividend = forms.IntegerField()
     divisor = forms.IntegerField()
 
     signed_requests = False
 
     def action(self, test):
-        dividend = self.cleaned_data.get('dividend')
-        divisor = self.cleaned_data.get('divisor')
+        dividend = self.cleaned_data.get("dividend")
+        divisor = self.cleaned_data.get("divisor")
         try:
             return float(dividend) / float(divisor)
         except ZeroDivisionError:
@@ -73,20 +77,16 @@ class DivisionCall(calls.APICall):
 
 
 class ProgrammingLanguages(calls.APICall):
-    RUBY = 'ruby'
-    PYTHON = 'python'
-    JAVA = 'java'
-    LANGUAGES = (
-        (RUBY, 'Freshman'),
-        (PYTHON, 'Sophomore'),
-        (JAVA, 'Junior')
-    )
+    RUBY = "ruby"
+    PYTHON = "python"
+    JAVA = "java"
+    LANGUAGES = ((RUBY, "Freshman"), (PYTHON, "Sophomore"), (JAVA, "Junior"))
     languages = forms.MultipleChoiceField(choices=LANGUAGES)
 
     def action(self, test):
-        return u'Good for you'
+        return u"Good for you"
 
 
-API.register(AuthenticateUserCall, 'user', 'authenticate', version='v1.0.0')
-API.register(DivisionCall, 'math', 'divide', version='v1.0.0')
-API.register(ProgrammingLanguages, 'comp', 'lang', version='v1.0.0')
+API.register(AuthenticateUserCall, "user", "authenticate", version="v1.0.0")
+API.register(DivisionCall, "math", "divide", version="v1.0.0")
+API.register(ProgrammingLanguages, "comp", "lang", version="v1.0.0")
