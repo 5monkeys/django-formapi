@@ -25,18 +25,11 @@ Version compatibility
 See Travis-CI page for actual test results:
 https://travis-ci.org/5monkeys/django-formapi
 
-======  ==========  ===  ===  ===  ===  ===
-Django  Python 2.6  2.7  3.3  3.4  3.5  3.6
-======  ==========  ===  ===  ===  ===  ===
- 1.3           Yes  Yes
- 1.4           Yes  Yes
- 1.5           Yes  Yes  Yes
- 1.6           Yes  Yes  Yes
- 1.7                Yes  Yes  Yes
- 1.8                Yes  Yes  Yes  Yes  Yes
- 1.9                Yes       Yes  Yes  Yes
- 1.10               Yes       Yes  Yes  Yes
-======  ==========  ===  ===  ===  ===  ===
+======  ===
+Django  3.6
+======  ===
+ 3.2    Yes
+======  ===
 
 
 Installation
