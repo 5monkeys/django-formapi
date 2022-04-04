@@ -1,15 +1,13 @@
 # flake8: noqa
-import sys
-import django
-
-from django.utils.encoding import (
-    smart_bytes as smart_b,
-    force_str as force_u,
-    smart_text as smart_u,
-)
-
 # noinspection PyUnresolvedReferences
 from urllib.parse import quote
+
+import django
+from django.utils.encoding import (
+    force_str as force_u,
+    smart_bytes as smart_b,
+    smart_text as smart_u,
+)
 
 ifilter = filter
 b_str = bytes
@@ -19,11 +17,11 @@ iteritems = lambda dic: dic.items()
 
 if django.VERSION < (1, 5):
     # noinspection PyDeprecation
-    from django.conf.urls.defaults import patterns, url, include
+    from django.conf.urls.defaults import include, patterns, url
 elif django.VERSION < (1, 10):
-    from django.conf.urls import patterns, url, include
+    from django.conf.urls import include, patterns, url
 else:
-    from django.conf.urls import url, include
+    from django.conf.urls import include, url
 
     def patterns(prefix, *urls):
         assert not prefix

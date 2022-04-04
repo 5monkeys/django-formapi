@@ -1,7 +1,8 @@
 import hashlib
 import hmac
 import uuid
-from .compat import force_u, smart_b, quote, b_str, u_str, smart_u
+
+from .compat import b_str, force_u, quote, smart_b, smart_u, u_str
 
 
 def get_sign(secret, querystring=None, **params):

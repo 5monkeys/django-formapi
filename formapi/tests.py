@@ -1,16 +1,16 @@
-from datetime import datetime, date, time
-from decimal import Decimal
 import json
+from datetime import date, datetime, time
+from decimal import Decimal
 
 import django
+import pytz
 from django.forms import IntegerField
-from django.test import TransactionTestCase, Client
+from django.test import Client, TransactionTestCase
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy
-import pytz
 
 from formapi.api import DjangoJSONEncoder
-from formapi.compat import smart_u, get_user_model
+from formapi.compat import get_user_model, smart_u
 from formapi.models import APIKey
 from formapi.utils import get_sign
 

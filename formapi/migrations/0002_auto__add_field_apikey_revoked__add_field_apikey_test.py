@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-import datetime
-
 try:
     from south.db import db
     from south.v2 import SchemaMigration
 
 except ImportError:
     try:
-        from django.db import migrations, models
+        from django.db import migrations
     except ImportError:
         raise Exception("South or Django>=1.8 is required")
 
@@ -16,7 +13,7 @@ except ImportError:
         operations = []
 
 else:
-    from django.db import models
+    pass
 
     class Migration(SchemaMigration):
         def forwards(self, orm):

@@ -2,7 +2,6 @@ from . import views
 from .api import API
 from .compat import patterns, url
 
-
 urlpatterns = patterns(
     "",
     url(r"discover/$", views.discover, name="api_discover"),

@@ -1,8 +1,10 @@
 import re
 import uuid
+
 import django
 from django import forms
 from django.db import models
+
 from .utils import prepare_uuid_string
 
 try:
