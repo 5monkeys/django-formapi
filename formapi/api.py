@@ -204,7 +204,7 @@ class API(FormView):
         # Authorize request
         if access_granted:
             self.log.info("Access Granted %s", self.get_request_params())
-            return super(API, self).dispatch(request, *args, **kwargs)
+            return super().dispatch(request, *args, **kwargs)
 
         # Access denied
         self.log.warning("Access Denied %s", self.get_request_params())
