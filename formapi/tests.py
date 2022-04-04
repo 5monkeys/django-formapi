@@ -1,4 +1,3 @@
-# coding=utf-8
 from datetime import datetime, date, time
 from decimal import Decimal
 import json
@@ -121,19 +120,19 @@ class HMACTest(TransactionTestCase):
 
     def test_parameter_sign(self):
         # test unicode
-        url_params = u"first_name=mårten&last_name=superkebab"
-        dict_params = {"first_name": u"mårten", "last_name": u"superkebab"}
+        url_params = "first_name=mårten&last_name=superkebab"
+        dict_params = {"first_name": "mårten", "last_name": "superkebab"}
         self.assert_equal_signs(url_params, dict_params)
         # test string
         url_params = "first_name=mårten&last_name=superkebab"
         dict_params = {"first_name": "mårten", "last_name": "superkebab"}
         self.assert_equal_signs(url_params, dict_params)
         # test integer
-        url_params = u"dividend=4&divisor=2"
+        url_params = "dividend=4&divisor=2"
         dict_params = {"dividend": 4, "divisor": 2}
         self.assert_equal_signs(url_params, dict_params)
         # test boolean
-        url_params = u"secure=True"
+        url_params = "secure=True"
         dict_params = {"secure": True}
         self.assert_equal_signs(url_params, dict_params)
 
@@ -221,5 +220,5 @@ class JSONEncoderTest(TransactionTestCase):
             self.dumps(values_list)
 
     def test_gettext(self):
-        gettext_data = {"gettext": ugettext_lazy(u"tränslate me please")}
+        gettext_data = {"gettext": ugettext_lazy("tränslate me please")}
         self.dumps(gettext_data)

@@ -1,4 +1,3 @@
-# coding=utf-8
 from collections import defaultdict
 import datetime
 import decimal
@@ -45,7 +44,7 @@ class DjangoJSONEncoder(JSONEncoder):
             from django.db.models.query import ValuesQuerySet
         else:
 
-            class ValuesQuerySet(object):
+            class ValuesQuerySet:
                 pass
 
         if date_obj is not None:
@@ -102,7 +101,7 @@ class API(FormView):
     @classonlymethod
     def as_view(cls, **initkwargs):
         autodiscover()
-        return super(API, cls).as_view(**initkwargs)
+        return super().as_view(**initkwargs)
 
     def get_form_class(self):
         try:
@@ -111,7 +110,7 @@ class API(FormView):
             raise Http404
 
     def get_form_kwargs(self):
-        kwargs = super(API, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         if self.api_key:
             kwargs["api_key"] = self.api_key
         return kwargs
@@ -172,7 +171,7 @@ class API(FormView):
     def get_log_header(self):
         if not hasattr(self, "log_header"):
             key = getattr(self, "api_key", None)
-            self.log_header = "[%s][%s][%s]" % (
+            self.log_header = "[{}][{}][{}]".format(
                 self.request.META["REMOTE_ADDR"],
                 self.request.META["REQUEST_METHOD"],
                 key.key if key else "unknown",
@@ -214,7 +213,7 @@ class API(FormView):
         # Authorize request
         if access_granted:
             self.log.info("Access Granted %s", self.get_request_params())
-            return super(API, self).dispatch(request, *args, **kwargs)
+            return super().dispatch(request, *args, **kwargs)
 
         # Access denied
         self.log.warning("Access Denied %s", self.get_request_params())

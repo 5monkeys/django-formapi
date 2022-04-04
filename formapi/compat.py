@@ -1,39 +1,20 @@
-# coding=utf-8
 # flake8: noqa
 import sys
 import django
 
-if sys.version_info >= (3,):
-    from django.utils.encoding import (
-        smart_bytes as smart_b,
-        force_str as force_u,
-        smart_text as smart_u,
-    )
+from django.utils.encoding import (
+    smart_bytes as smart_b,
+    force_str as force_u,
+    smart_text as smart_u,
+)
 
-    # noinspection PyUnresolvedReferences
-    from urllib.parse import quote
+# noinspection PyUnresolvedReferences
+from urllib.parse import quote
 
-    ifilter = filter
-    b_str = bytes
-    u_str = str
-    iteritems = lambda dic: dic.items()
-else:
-    from django.utils.encoding import smart_str as smart_b, force_unicode as force_u
-
-    if django.VERSION >= (1, 4):
-        from django.utils.encoding import smart_text as smart_u
-    else:
-        from django.utils.encoding import smart_unicode as smart_u
-    # noinspection PyUnresolvedReferences
-    from urllib2 import quote
-
-    # noinspection PyUnresolvedReferences
-    from itertools import ifilter
-
-    b_str = str
-    # noinspection PyUnresolvedReferences
-    u_str = unicode
-    iteritems = lambda dic: dic.iteritems()
+ifilter = filter
+b_str = bytes
+u_str = str
+iteritems = lambda dic: dic.items()
 
 
 if django.VERSION < (1, 5):

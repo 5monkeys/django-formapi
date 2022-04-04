@@ -1,4 +1,3 @@
-# coding=utf-8
 from . import views
 from .api import API
 from .compat import patterns, url

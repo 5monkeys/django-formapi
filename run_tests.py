@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# coding=utf-8
-from __future__ import print_function
 import sys
 import django
 
@@ -32,7 +30,7 @@ def main():
     def patched_suite_result(suite, result, **kwargs):
         from formapi.tests import TOTAL_TESTS
 
-        assert result.testsRun == TOTAL_TESTS, "Run %s tests, expected to run %s" % (
+        assert result.testsRun == TOTAL_TESTS, "Run {} tests, expected to run {}".format(
             result.testsRun,
             TOTAL_TESTS,
         )

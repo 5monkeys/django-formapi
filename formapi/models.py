@@ -1,4 +1,3 @@
-# coding=utf-8
 from django.db import models
 from .fields import UUIDField
 
@@ -18,4 +17,4 @@ class APIKey(models.Model):
         verbose_name_plural = "API Keys"
 
     def __unicode__(self):
-        return u"API Key #%s" % self.id
+        return "API Key #%s" % self.id

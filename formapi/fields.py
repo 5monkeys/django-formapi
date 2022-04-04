@@ -1,4 +1,3 @@
-# coding=utf-8
 import re
 import uuid
 import django
@@ -16,7 +15,7 @@ except (ImportError, AttributeError):
 
 def uuid_validator(value):
     if re.search("[^a-f0-9]+", value):
-        raise forms.ValidationError(u"Invalid UUID value")
+        raise forms.ValidationError("Invalid UUID value")
 
 
 class UUIDField(models.Field):
@@ -25,7 +24,7 @@ class UUIDField(models.Field):
 
     def __init__(self, **kwargs):
         kwargs.update(max_length=32, editable=False, blank=True, unique=True)
-        super(UUIDField, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def db_type(self, connection=None):
         if connection and "postgres" in connection.vendor:
@@ -61,7 +60,7 @@ class UUIDField(models.Field):
                 forms.validators.MinLengthValidator,
             ],
         )
-        return super(UUIDField, self).formfield(**kwargs)
+        return super().formfield(**kwargs)
 
 
 try:

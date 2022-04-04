@@ -1,4 +1,3 @@
-# coding=utf8
 import django
 from django import template
 

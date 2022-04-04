@@ -1,4 +1,3 @@
-# coding=utf-8
 from django import forms
 from django.contrib.auth import authenticate
 from django.utils.translation import ugettext as _
@@ -25,7 +24,7 @@ class AuthenticateUserCall(calls.APICall):
 
     def __init__(self, *args, **kwargs):
         self.user_cache = None
-        super(AuthenticateUserCall, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Set the label for the "username" field.
         self.username_field = get_user_model()._meta.get_field("username")
@@ -34,7 +33,7 @@ class AuthenticateUserCall(calls.APICall):
         return self.get_user_id()
 
     def clean(self):
-        super(AuthenticateUserCall, self).clean()
+        super().clean()
         username = self.cleaned_data.get("username")
         password = self.cleaned_data.get("password")
         if username and password:
@@ -84,7 +83,7 @@ class ProgrammingLanguages(calls.APICall):
     languages = forms.MultipleChoiceField(choices=LANGUAGES)
 
     def action(self, test):
-        return u"Good for you"
+        return "Good for you"
 
 
 API.register(AuthenticateUserCall, "user", "authenticate", version="v1.0.0")
