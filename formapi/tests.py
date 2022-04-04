@@ -4,14 +4,13 @@ from decimal import Decimal
 from functools import partial
 
 import pytz
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.forms import IntegerField
 from django.test import Client, TransactionTestCase
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy
 
 from formapi.api import DjangoJSONEncoder
-from formapi.compat import get_user_model, smart_u
 from formapi.models import APIKey
 from formapi.utils import get_sign
 
@@ -205,7 +204,7 @@ class JSONEncoderTest(TransactionTestCase):
         self.dumps(decimal_data)
 
     def test_queryset(self):
-        user_manager = User.objects
+        user_manager = get_user_model().objects
         user_manager.create(username="test", email="test@example.com")
         queryset = {"queryset": user_manager.all()}
         self.dumps(queryset)
