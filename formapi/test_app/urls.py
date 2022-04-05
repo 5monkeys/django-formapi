@@ -1,3 +1,3 @@
-from django.conf.urls import include, url
+from django.urls import include, re_path
 
-urlpatterns = [url(r"^api/", include("formapi.urls"))]
+urlpatterns = [re_path(r"^api/", include("formapi.urls"))]

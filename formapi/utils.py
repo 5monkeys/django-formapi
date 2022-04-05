@@ -3,7 +3,7 @@ import hmac
 import uuid
 from urllib.parse import quote
 
-from django.utils.encoding import force_str, smart_bytes, smart_text
+from django.utils.encoding import force_str, smart_bytes, smart_str
 
 
 def get_sign(secret, querystring=None, **params):
@@ -25,7 +25,7 @@ def get_sign(secret, querystring=None, **params):
             try:
                 value = list(value)
             except TypeError as e:
-                assert "is not iterable" in smart_text(e)
+                assert "is not iterable" in smart_str(e)
                 value = smart_bytes(value)
                 sorted_params.append((key, value))
             else:
