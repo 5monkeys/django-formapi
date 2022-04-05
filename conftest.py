@@ -14,6 +14,7 @@ def pytest_configure():
             "django.contrib.contenttypes",
             "django.contrib.admin",
             "django.contrib.sessions",
+            "django.contrib.messages",
             "formapi",
             "formapi.test_app",
         ],
@@ -24,6 +25,11 @@ def pytest_configure():
             }
         },
         MIDDLEWARE_CLASSES=[],
+        MIDDLEWARE=[
+            "django.contrib.sessions.middleware.SessionMiddleware",
+            "django.contrib.messages.middleware.MessageMiddleware",
+            "django.contrib.auth.middleware.AuthenticationMiddleware",
+        ],
         MEDIA_ROOT="/tmp/formapi/",
         MEDIA_PATH="/media/",
         ROOT_URLCONF="formapi.test_app.urls",
@@ -34,11 +40,17 @@ def pytest_configure():
             {
                 "APP_DIRS": True,
                 "BACKEND": "django.template.backends.django.DjangoTemplates",
+                "OPTIONS": {
+                    "context_processors": [
+                        "django.contrib.auth.context_processors.auth",
+                        "django.contrib.messages.context_processors.messages",
+                        "django.template.context_processors.request",
+                    ],
+                },
             },
         ],
     )
 
-    if django.VERSION >= (1, 7):
-        django.setup()
+    django.setup()
 
     return settings

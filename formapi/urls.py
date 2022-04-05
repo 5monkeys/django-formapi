@@ -1,18 +1,18 @@
+from django.urls import re_path
+
 from . import views
 from .api import API
-from .compat import patterns, url
 
-urlpatterns = patterns(
-    "",
-    url(r"discover/$", views.discover, name="api_discover"),
-    url(
+urlpatterns = [
+    re_path(r"discover/$", views.discover, name="api_discover"),
+    re_path(
         r"call/(?P<version>.+)/(?P<namespace>\w+)/(?P<call_name>\w+)/$",
         views.call,
         name="api_call",
     ),
-    url(
+    re_path(
         r"(?P<version>.+)/(?P<namespace>\w+)/(?P<call>\w+)/",
         API.as_view(),
         name="api_view",
     ),
-)
+]

@@ -2,7 +2,6 @@
 
 import codecs
 import os
-import sys
 
 from setuptools import find_packages, setup
 
@@ -10,8 +9,6 @@ import formapi
 
 readme = os.path.join(os.path.dirname(__file__), "README.rst")
 readme = codecs.open(readme).read()
-if (3, 3) <= sys.version_info < (3, 4, 3):
-    readme = readme.decode("utf8")
 
 setup(
     name="django-formapi",

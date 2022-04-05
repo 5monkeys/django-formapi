@@ -1,10 +1,9 @@
 from django import forms
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import ugettext as _
 
 from formapi import calls
 from formapi.api import API
-from formapi.compat import get_user_model
 
 
 class AuthenticateUserCall(calls.APICall):
