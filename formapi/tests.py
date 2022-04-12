@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy
 
 from formapi.api import DjangoJSONEncoder
 from formapi.models import APIKey
-from formapi.utils import get_sign
+from formapi.utils import get_sign, prepare_uuid_string
 
 TOTAL_TESTS = 19
 
@@ -49,8 +49,6 @@ class SignedRequestTest(TransactionTestCase):
         smart_str(self.api_key)
 
     def test_api_key_gets_prepared_uuid_str_on_assignment(self):
-        from formapi.utils import prepare_uuid_string
-
         # Intentionally get key again
         test_key = APIKey.objects.get(email="test@example.com")
 
